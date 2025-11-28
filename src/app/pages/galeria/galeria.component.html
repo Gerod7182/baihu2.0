@@ -1,0 +1,41 @@
+<section class="hero hero-galeria" style="background: url('assets/img/samurai.png') top center/cover no-repeat; height: 100vh; display: flex; align-items: center; justify-content: center;">
+  <div class="hero-content">
+    <h1 class="hero-title" style="font-size: 3rem; color: white; text-shadow: 0 4px 10px rgba(0,0,0,0.8);">{{ textos['galeria-titulo'] }}</h1>
+  </div>
+</section>
+
+<nav class="gallery-filters">
+  <button class="filter-btn" [class.active]="filtroActivo === 'todos'" (click)="filtrar('todos')">{{ textos['filtro-todos'] }}</button>
+  <button class="filter-btn" [class.active]="filtroActivo === 'espiritual'" (click)="filtrar('espiritual')">{{ textos['filtro-espiritual'] }}</button>
+  <button class="filter-btn" [class.active]="filtroActivo === 'anime'" (click)="filtrar('anime')">{{ textos['filtro-anime'] }}</button>
+  <button class="filter-btn" [class.active]="filtroActivo === 'pop'" (click)="filtrar('pop')">{{ textos['filtro-pop'] }}</button>
+</nav>
+
+<div class="masonry-grid">
+
+  <!-- BUCLE MAESTRO: Genera todas las imágenes automáticamente -->
+  <!-- El *ngIf se asegura de que solo se muestren si coinciden con el filtro -->
+  <ng-container *ngFor="let item of itemsGaleria">
+    <div class="masonry-item" *ngIf="mostrarItem(item.categoria)">
+      
+      <figure (click)="abrirModal(item.img, textos[item.tituloKey], textos[item.descKey])">
+        <img [src]="item.img" [alt]="textos[item.tituloKey]">
+        <figcaption>{{ textos[item.tituloKey] }}</figcaption>
+      </figure>
+      
+    </div>
+  </ng-container>
+
+</div> 
+
+<!-- MODAL (Lightbox) -->
+<div class="modal-overlay" *ngIf="modalAbierto" (click)="cerrarModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="cerrarModal()">&times;</button>
+    <img [src]="imagenSeleccionada" alt="Ampliada">
+    <div class="modal-info">
+      <h3>{{ tituloSeleccionado }}</h3>
+      <p>{{ descSeleccionada }}</p>
+    </div>
+  </div>
+</div>

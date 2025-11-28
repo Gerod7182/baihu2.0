@@ -1,0 +1,38 @@
+<section class="hero hero-ofertas" style="background: url('assets/img/sabiosamu.png') center/cover no-repeat; height: 60vh; display: flex; align-items: center; justify-content: center;">
+  <div class="hero-content">
+    <h1 class="hero-title" id="ofertas-titulo" style="font-size: 3rem; color: white; text-shadow: 0 4px 10px rgba(0,0,0,0.8);">
+      {{ textos['ofertas-titulo'] }}
+    </h1>
+  </div>
+</section>
+
+<section class="gallery-section">
+  <h2 id="ofertas-subtitulo">{{ textos['ofertas-subtitulo'] }}</h2>
+
+  <div class="gallery-grid">
+    
+    <div class="gallery-item" *ngFor="let oferta of listaOfertas" style="background: #111; border-radius: 8px; overflow: hidden; padding: 1rem;">
+      <img [src]="oferta.img" [alt]="textos[oferta.codigo]" style="width: 100%; border-radius: 8px;">
+      
+      <figcaption style="padding: 1rem 0;">
+        <span>{{ textos[oferta.codigo] }}</span><br/>
+        
+        <span class="old-price" style="text-decoration: line-through; color: #999;">$ {{ oferta.precioAntes | number }}</span>
+        <span class="price" style="color: #27ae60; font-weight: bold; margin-left: 0.5rem;">$ {{ oferta.precioAhora | number }}</span><br/>
+        
+        <button
+          class="hero-btn"
+          style="margin-top: 1rem;"
+          (click)="agregarAlCarrito(oferta.codigo, oferta.img, oferta.precioAhora)"
+        >
+          {{ textos['btn-agregar'] }}
+        </button>
+      </figcaption>
+    </div>
+
+  </div>
+</section>
+
+<div id="notificacion-carrito" class="notificacion-oculta" [class.activa]="notificacionVisible">
+  <span id="notificacion-mensaje">{{ notificacionMensaje }}</span>
+</div>

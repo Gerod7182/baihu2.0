@@ -1,0 +1,75 @@
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-title" id="hero-titulo">{{ textos['hero-titulo'] }}</h1>
+  </div>
+</section>
+
+<section id="camisetas" class="category-section">
+  <h2>{{ textos['sec-camisetas'] }}</h2>
+  <div class="gallery-grid">
+    
+    <div class="product-card" *ngFor="let item of camisetas">
+      <img [src]="item.img" [alt]="textos[item.codigo]">
+      <h3>{{ textos[item.codigo] }}</h3>
+      <p class="price">$ {{ item.precio | number }}</p>
+      <button class="hero-btn" (click)="agregarAlCarrito(item.codigo, item.img, item.precio)">
+        {{ textos['btn-agregar'] }}
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<section id="stickers" class="category-section">
+  <h2>{{ textos['sec-stickers'] }}</h2>
+  <div class="gallery-grid">
+    
+    <div class="product-card" *ngFor="let item of stickers">
+      <img [src]="item.img" [alt]="textos[item.codigo]">
+      <h3>{{ textos[item.codigo] }}</h3>
+      <p class="price">$ {{ item.precio | number }}</p>
+      <button class="hero-btn" (click)="agregarAlCarrito(item.codigo, item.img, item.precio)">
+        {{ textos['btn-agregar'] }}
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<section id="posters" class="category-section">
+  <h2>{{ textos['sec-posters'] }}</h2>
+  <div class="gallery-grid">
+    
+    <div class="product-card" *ngFor="let item of posters">
+      <img [src]="item.img" [alt]="textos[item.codigo]">
+      <h3>{{ textos[item.codigo] }}</h3>
+      <p class="price">$ {{ item.precio | number }}</p>
+      <button class="hero-btn" (click)="agregarAlCarrito(item.codigo, item.img, item.precio)">
+        {{ textos['btn-agregar'] }}
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<section id="comentarios" class="comentarios">
+  <h2>{{ textos['sec-comentarios'] }}</h2>
+  <p>{{ textos['txt-comentarios'] }}</p>
+  
+  <form action="https://formspree.io/f/xkgrznae" method="POST">
+    <label for="name">{{ textos['lbl-nombre'] }}:</label>
+    <input type="text" name="name" required>
+    
+    <label for="email">{{ textos['lbl-email'] }}:</label>
+    <input type="email" name="email" required>
+    
+    <label for="comment">{{ textos['lbl-comentario'] }}:</label>
+    <textarea name="comment" rows="5" required></textarea>
+    
+    <button type="submit">{{ textos['btn-enviar'] }}</button>
+  </form>
+</section>
+
+<div id="notificacion-carrito" class="notificacion-oculta" [class.activa]="notificacionVisible">
+  <span id="notificacion-mensaje">{{ notificacionMensaje }}</span>
+</div>

@@ -1,0 +1,50 @@
+<header class="main-header">
+  <div class="header-container">
+
+    <div class="logo">
+      <a routerLink="/">
+        <span class="logo-text">BAIHUART</span>
+      </a>
+    </div>
+
+    <nav>
+      <ul class="nav-list">
+        <li><a routerLink="/" id="nav-tienda">{{ textos['nav-tienda'] }}</a></li>
+        <li><a routerLink="/galeria" id="nav-galeria">{{ textos['nav-galeria'] }}</a></li>
+        <li><a routerLink="/ofertas" id="nav-ofertas">{{ textos['nav-ofertas'] }}</a></li>
+      </ul>
+    </nav>
+
+    <div class="search-box">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" class="search-input" id="barra-busqueda" [placeholder]="textos['buscar-placeholder']" />
+    </div>
+
+    <div class="icon-group">
+      
+      <div class="language-selector">
+        <i class="fas fa-globe"></i>
+        <select id="selector-idioma" (change)="cambiarIdioma($event)">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+          <option value="pt">PT</option>
+        </select>
+      </div>
+
+      <a routerLink="/login" class="user-link">
+        <i class="fas fa-user"></i>
+        <span id="nombreUsuarioHeader"></span>
+      </a>
+
+      <button (click)="cerrarSesion()" class="hero-btn" id="btn-logout" style="display:none;">
+        Cerrar Sesión
+      </button>
+
+      <a routerLink="/carrito" class="cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count">{{ cartCount }}</span>
+      </a>
+
+    </div> 
+  </div>
+</header>

@@ -1,0 +1,40 @@
+<section class="gallery-section" style="min-height: 60vh; padding-top: 4rem;">
+  <h2 style="font-family: 'Orbitron', sans-serif; color: #ff3223;">{{ textos['carrito-titulo'] }}</h2>
+
+  <div *ngIf="carrito.length === 0" class="carrito-vacio-container">
+    <i class="fas fa-ghost icono-vacio"></i>
+    
+    <h3>{{ textos['carrito-vacio-titulo'] }}</h3>
+    <p>{{ textos['carrito-vacio-sub'] }}</p>
+    
+    <a routerLink="/" class="hero-btn btn-explorar">
+      {{ textos['btn-explorar'] }}
+    </a>
+  </div>
+
+  <div class="gallery-grid" *ngIf="carrito.length > 0">
+    <div class="gallery-item" *ngFor="let item of carrito" style="background: #222; padding: 1rem; border-radius: 8px;">
+      <img [src]="item.img" [alt]="item.nombre" style="width: 100%; border-radius: 8px; margin-bottom: 1rem;">
+      
+      <div style="text-align: left; color: white;">
+        
+        <h3 style="color: #ff3223; font-size: 1.1rem;">{{ textos[item.nombre] }}</h3>
+        
+        <p>{{ textos['lbl-precio'] }}: ${{ item.precio }}</p>
+        <p>{{ textos['lbl-cantidad'] }}: {{ item.cantidad }}</p>
+        <p style="font-weight: bold; margin-top: 5px;">{{ textos['lbl-subtotal'] }}: ${{ item.precio * item.cantidad }}</p>
+      
+      </div>
+
+      <button (click)="eliminarItem(item.id)" class="hero-btn" style="background: #8a0606; margin-top: 1rem; font-size: 0.8rem; width: 100%;">
+        {{ textos['btn-eliminar'] }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="carrito.length > 0" style="margin-top: 3rem; text-align: center; border-top: 1px solid #333; padding-top: 2rem;">
+    <h3 style="font-size: 2rem; color: white; margin-bottom: 1rem;">{{ textos['txt-total'] }}: ${{ total }}</h3>
+    <button (click)="vaciarCarrito()" class="hero-btn" style="background: #8a0606;">{{ textos['btn-vaciar'] }}</button>
+  </div>
+
+</section>

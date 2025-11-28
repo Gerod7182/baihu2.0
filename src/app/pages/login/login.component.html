@@ -1,0 +1,30 @@
+<div class="login-container" style="max-width: 400px; margin: 5rem auto; background: #111; padding: 2rem; border-radius: 10px; text-align: center; color: white;">
+  
+  <h2 style="color: #ff3223; margin-bottom: 1.5rem; font-family: 'Orbitron', sans-serif;">
+    {{ esRegistro ? textos['login-crear'] : textos['login-titulo'] }}
+  </h2>
+
+  <form (ngSubmit)="onSubmit()">
+    
+    <div *ngIf="esRegistro">
+      <input type="text" [(ngModel)]="datos.nombre" name="nombre" [placeholder]="textos['lbl-nombre']" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: none; color: white;" required>
+      <input type="tel" [(ngModel)]="datos.telefono" name="telefono" [placeholder]="textos['lbl-telefono']" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: none; color: white;">
+    </div>
+
+    <input type="email" [(ngModel)]="datos.email" name="email" [placeholder]="textos['lbl-email']" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: none; color: white;" required>
+    <input type="password" [(ngModel)]="datos.password" name="password" [placeholder]="textos['lbl-password']" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: none; color: white;" required>
+
+    <button type="submit" class="hero-btn" style="width: 100%; margin-top: 10px;">
+      {{ esRegistro ? textos['btn-registrarse'] : textos['btn-entrar'] }}
+    </button>
+  </form>
+
+  <p style="margin-top: 1rem; color: #ccc;">
+    {{ esRegistro ? textos['txt-si-cuenta'] : textos['txt-no-cuenta'] }}
+    <a href="javascript:void(0)" (click)="toggleModo()" style="color: #ff3223; font-weight: bold;">
+      {{ esRegistro ? textos['link-inicia'] : textos['link-registrate'] }}
+    </a>
+  </p>
+
+  <p *ngIf="mensajeError" style="color: #ff3223; margin-top: 10px;">{{ mensajeError }}</p>
+</div>
