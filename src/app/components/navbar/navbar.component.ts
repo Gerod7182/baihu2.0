@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslationService } from '../../services/translation.service';
 import { CartService } from '../../services/cart.service';
+import { AuthService } from '../../services/auth.service';
+
+// ⚠️ Debe coincidir con el mismo correo que pusiste en admin.guard.ts
+const ADMIN_EMAIL = 'g3rm4n7115@gmail.com';
 
 @Component({
   selector: 'app-navbar',
@@ -12,38 +16,53 @@ export class NavbarComponent implements OnInit {
   cartCount = 0;
   textos: any = {};
   nombreUsuario = '';
+  correoUsuario = '';
+  iconoUsuario = 'fa-user';
   mostrarLogout = false;
+  esAdmin = false;
+  usuarioLogueado = false;
 
   idioma: string = 'es';
 
-  // 🔥 NUEVO: control del menú de idioma
   menuAbierto = false;
+  menuUsuarioAbierto = false;
 
   constructor(
     private translationService: TranslationService,
-    private cartService: CartService
+    private cartService: CartService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
 
-    // 🔥 idioma reactivo
     this.translationService.idioma$.subscribe(idioma => {
       this.idioma = idioma;
       this.textos = this.translationService.obtenerTextos(idioma);
     });
 
-    // 🔥 carrito en tiempo real
     this.cartService.cartCount$.subscribe(count => {
       this.cartCount = count;
     });
 
-    // 🔥 usuario
-    this.cargarUsuario();
+    // 🔥 usuario real de Firebase Auth
+    this.authService.user$.subscribe(usuario => {
+      if (usuario) {
+        this.nombreUsuario = usuario.displayName || usuario.email;
+        this.correoUsuario = usuario.email;
+        this.iconoUsuario = usuario.photoURL || 'fa-user';
+        this.mostrarLogout = true;
+        this.usuarioLogueado = true;
+        this.esAdmin = usuario.email === ADMIN_EMAIL;
+      } else {
+        this.nombreUsuario = '';
+        this.correoUsuario = '';
+        this.iconoUsuario = 'fa-user';
+        this.mostrarLogout = false;
+        this.usuarioLogueado = false;
+        this.esAdmin = false;
+      }
+    });
   }
-
-  // =========================
-  // 🌐 IDIOMA (NUEVO SISTEMA)
-  // =========================
 
   toggleLangMenu(): void {
     this.menuAbierto = !this.menuAbierto;
@@ -54,31 +73,14 @@ export class NavbarComponent implements OnInit {
     this.menuAbierto = false;
   }
 
-  // =========================
-  // 👤 USUARIO
-  // =========================
-
-  cargarUsuario(): void {
-    const usuarioGuardado = localStorage.getItem('usuario');
-
-    if (!usuarioGuardado) {
-      this.nombreUsuario = '';
-      this.mostrarLogout = false;
-      return;
-    }
-
-    try {
-      const usuario = JSON.parse(usuarioGuardado);
-      this.nombreUsuario = usuario?.nombre ?? '';
-      this.mostrarLogout = !!this.nombreUsuario;
-    } catch {
-      this.nombreUsuario = '';
-      this.mostrarLogout = false;
-    }
+  toggleUserMenu(): void {
+    this.menuUsuarioAbierto = !this.menuUsuarioAbierto;
   }
 
   cerrarSesion(): void {
-    localStorage.removeItem('usuario');
-    window.location.reload();
+    this.menuUsuarioAbierto = false;
+    this.authService.logout().then(() => {
+      window.location.reload();
+    });
   }
 }

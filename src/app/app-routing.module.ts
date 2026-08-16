@@ -7,6 +7,7 @@ import { CarritoComponent } from './pages/carrito/carrito.component';
 import { LoginComponent } from './pages/login/login.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { GraciasComponent } from './pages/gracias/gracias.component'; // 🔥 FALTABA
+import { AdminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -17,7 +18,7 @@ const routes: Routes = [
 
   { path: 'gracias', component: GraciasComponent }, // 🔥 ESTA ES LA CLAVE
 
-  { path: 'admin', component: AdminComponent },
+  { path: 'admin', component: AdminComponent, canActivate: [AdminGuard] },
 
   { path: '**', redirectTo: '' }
 ];

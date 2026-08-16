@@ -7,9 +7,21 @@
   <form (ngSubmit)="onSubmit()">
     
     <div *ngIf="esRegistro">
-      <input type="text" [(ngModel)]="datos.nombre" name="nombre" [placeholder]="textos['lbl-nombre']" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: none; color: white;" required>
-      <input type="tel" [(ngModel)]="datos.telefono" name="telefono" [placeholder]="textos['lbl-telefono']" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: none; color: white;">
+  <input type="text" [(ngModel)]="datos.nombre" name="nombre" [placeholder]="textos['lbl-nombre']" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: none; color: white;" required>
+  <input type="tel" [(ngModel)]="datos.telefono" name="telefono" [placeholder]="textos['lbl-telefono']" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: none; color: white;">
+
+  <p style="text-align: left; color: #ccc; margin-bottom: 8px; font-size: 0.9rem;">Elige tu ícono:</p>
+  <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 15px;">
+    <div
+      *ngFor="let icono of iconosDisponibles"
+      (click)="seleccionarIcono(icono)"
+      [style.border]="datos.avatar === icono ? '2px solid #ff3223' : '2px solid #444'"
+      style="width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #222;"
+    >
+      <i class="fas" [ngClass]="icono" style="color: white; font-size: 1.2rem;"></i>
     </div>
+  </div>
+</div>
 
     <input type="email" [(ngModel)]="datos.email" name="email" [placeholder]="textos['lbl-email']" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: none; color: white;" required>
     <input type="password" [(ngModel)]="datos.password" name="password" [placeholder]="textos['lbl-password']" style="width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: none; color: white;" required>

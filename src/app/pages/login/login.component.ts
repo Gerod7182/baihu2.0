@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslationService } from '../../services/translation.service'; // <--- Importante
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,17 +14,28 @@ export class LoginComponent implements OnInit {
   mensajeError: string = '';
   textos: any = {}; // <--- Variable para textos
 
+  // Íconos disponibles para elegir en el registro (Font Awesome, ya cargado en el proyecto)
+  iconosDisponibles: string[] = ['fa-dragon', 'fa-fire', 'fa-skull', 'fa-ghost', 'fa-crow', 'fa-spider', 'fa-cat', 'fa-hat-wizard'];
+
   datos = {
     nombre: '',
     email: '',
     password: '',
-    telefono: ''
+    telefono: '',
+    avatar: 'fa-dragon'
   };
 
-  constructor(private router: Router, private translationService: TranslationService) {}
+  seleccionarIcono(icono: string) {
+    this.datos.avatar = icono;
+  }
+
+  constructor(
+    private router: Router,
+    private translationService: TranslationService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    // Suscripción al idioma
     this.translationService.idioma$.subscribe(idioma => {
       this.textos = this.translationService.obtenerTextos(idioma);
     });
@@ -42,35 +54,45 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  registrar() {
+  async registrar() {
     if (!this.datos.email || !this.datos.password || !this.datos.nombre) {
-      this.mostrarError('Todos los campos son obligatorios'); // Podrías traducir esto también
+      this.mostrarError('Todos los campos son obligatorios');
       return;
     }
-    let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    if (usuarios.some((u: any) => u.email === this.datos.email)) {
-      this.mostrarError('El correo ya está registrado');
-      return;
+    try {
+      await this.authService.register(this.datos.email, this.datos.password, this.datos.nombre, this.datos.avatar);
+      alert('¡Registro exitoso! Ahora inicia sesión.');
+      this.toggleModo();
+    } catch (error: any) {
+      this.mostrarError(this.traducirError(error.code));
     }
-    usuarios.push(this.datos);
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    alert('¡Registro exitoso! Ahora inicia sesión.');
-    this.toggleModo();
   }
 
-  entrar() {
-    let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    const usuarioEncontrado = usuarios.find((u: any) => 
-      u.email === this.datos.email && u.password === this.datos.password
-    );
-
-    if (usuarioEncontrado) {
-      localStorage.setItem('usuario', JSON.stringify(usuarioEncontrado));
+  async entrar() {
+    try {
+      await this.authService.login(this.datos.email, this.datos.password);
       this.router.navigate(['/']).then(() => {
         window.location.reload();
       });
-    } else {
-      this.mostrarError('Correo o contraseña incorrectos');
+    } catch (error: any) {
+      this.mostrarError(this.traducirError(error.code));
+    }
+  }
+
+  traducirError(code: string): string {
+    switch (code) {
+      case 'auth/invalid-email':
+        return 'Correo inválido';
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+        return 'Correo o contraseña incorrectos';
+      case 'auth/email-already-in-use':
+        return 'El correo ya está registrado';
+      case 'auth/weak-password':
+        return 'La contraseña debe tener al menos 6 caracteres';
+      default:
+        return 'Ocurrió un error, intenta de nuevo';
     }
   }
 

@@ -46,19 +46,34 @@
 
 </div>
 
-      <a routerLink="/login" class="user-link">
-        <i class="fas fa-user"></i>
-        <span id="nombreUsuarioHeader">{{ nombreUsuario }}</span>
-      </a>
+      <div class="user-menu-container" style="position: relative;">
 
-      <button
-        *ngIf="mostrarLogout"
-        (click)="cerrarSesion()"
-        class="logout-btn"
-        id="btn-logout"
-      >
-        Cerrar Sesión
-      </button>
+        <a *ngIf="!usuarioLogueado" routerLink="/login" class="user-link">
+          <i class="fas fa-user"></i>
+        </a>
+
+        <div *ngIf="usuarioLogueado" (click)="toggleUserMenu()" style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <i class="fas" [ngClass]="iconoUsuario" style="color: white;"></i>
+        </div>
+
+        <div *ngIf="usuarioLogueado && menuUsuarioAbierto" style="position: absolute; right: 0; top: 35px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; min-width: 220px; z-index: 100; box-shadow: 0 8px 20px rgba(0,0,0,0.5);">
+
+          <div style="padding: 14px; border-bottom: 1px solid #333;">
+            <div style="color: white; font-weight: bold;">{{ nombreUsuario }}</div>
+            <div style="color: #999; font-size: 0.8rem;">{{ correoUsuario }}</div>
+          </div>
+
+          <a *ngIf="esAdmin" routerLink="/admin" (click)="menuUsuarioAbierto = false" style="display: block; padding: 10px 14px; color: #ff4444; font-weight: bold; text-decoration: none;">
+            <i class="fas fa-lock" style="margin-right: 8px;"></i>Panel Admin
+          </a>
+
+          <div (click)="cerrarSesion()" style="padding: 10px 14px; color: #ccc; cursor: pointer;">
+            <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Cerrar Sesión
+          </div>
+
+        </div>
+
+      </div>
 
       <a routerLink="/carrito" class="cart" title="Carrito">
   <i class="fas fa-shopping-cart"></i>
