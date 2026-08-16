@@ -7,7 +7,7 @@
       </a>
     </div>
 
-    <nav>
+    <nav class="main-nav">
       <ul class="nav-list">
         <li><a routerLink="/" id="nav-tienda">{{ textos['nav-tienda'] }}</a></li>
         <li><a routerLink="/galeria" id="nav-galeria">{{ textos['nav-galeria'] }}</a></li>
@@ -17,34 +17,58 @@
 
     <div class="search-box">
       <i class="fas fa-search search-icon"></i>
-      <input type="text" class="search-input" id="barra-busqueda" [placeholder]="textos['buscar-placeholder']" />
+      <input
+        type="text"
+        class="search-input"
+        id="barra-busqueda"
+        [placeholder]="textos['buscar-placeholder']"
+      />
     </div>
 
     <div class="icon-group">
-      
-      <div class="language-selector">
-        <i class="fas fa-globe"></i>
-        <select id="selector-idioma" (change)="cambiarIdioma($event)">
-          <option value="es">ES</option>
-          <option value="en">EN</option>
-          <option value="pt">PT</option>
-        </select>
-      </div>
+      <a href="https://github.com/Gerod7182/baihuart-code" target="_blank" rel="noopener noreferrer" title="Ver Código en GitHub">
+        <i class="fab fa-github"></i>
+      </a>
+
+    <div class="lang-container" (click)="toggleLangMenu()">
+
+  <div class="lang-icon">
+    🌐
+  </div>
+
+  <div class="lang-menu" *ngIf="menuAbierto">
+
+    <div (click)="seleccionarIdioma('es')">🇪🇸 Español</div>
+    <div (click)="seleccionarIdioma('en')">🇺🇸 English</div>
+    <div (click)="seleccionarIdioma('pt')">🇧🇷 Português</div>
+
+  </div>
+
+</div>
 
       <a routerLink="/login" class="user-link">
         <i class="fas fa-user"></i>
-        <span id="nombreUsuarioHeader"></span>
+        <span id="nombreUsuarioHeader">{{ nombreUsuario }}</span>
       </a>
 
-      <button (click)="cerrarSesion()" class="hero-btn" id="btn-logout" style="display:none;">
+      <button
+        *ngIf="mostrarLogout"
+        (click)="cerrarSesion()"
+        class="logout-btn"
+        id="btn-logout"
+      >
         Cerrar Sesión
       </button>
 
-      <a routerLink="/carrito" class="cart">
-        <i class="fas fa-shopping-cart"></i>
-        <span class="cart-count">{{ cartCount }}</span>
-      </a>
+      <a routerLink="/carrito" class="cart" title="Carrito">
+  <i class="fas fa-shopping-cart"></i>
 
-    </div> 
+  <!-- 🔥 solo aparece si hay productos -->
+  <span class="cart-count" *ngIf="cartCount > 0">
+    {{ cartCount }}
+  </span>
+</a>
+    </div>
+
   </div>
 </header>

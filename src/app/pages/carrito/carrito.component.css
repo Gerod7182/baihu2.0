@@ -1,0 +1,219 @@
+/* =========================
+   BOTÓN VACIAR CARRITO 🔥
+========================= */
+.btn-vaciar {
+  background: transparent;
+  border: 2px solid #ff3223;
+  min-width: 220px;
+  max-width: 400px;
+  width: auto;
+}
+
+/* 🔥 HOVER LIMPIO (sin bugs) */
+.btn-vaciar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255,50,35,0.6);
+}
+
+
+/* =========================
+   CONTENEDOR VACÍO PRO 🔥
+========================= */
+.carrito-vacio-container {
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+
+  background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  margin-top: 2rem;
+}
+
+/* TEXO */
+.carrito-vacio-container h3 {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.carrito-vacio-container p {
+  color: #aaa;
+  max-width: 400px;
+  margin-bottom: 1.5rem;
+  z-index: 2;
+}
+
+
+/* =========================
+   PORTAL ENERGÍA 🔥
+========================= */
+.portal {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,50,50,0.4), transparent 70%);
+  filter: blur(20px);
+  animation: pulse 3s infinite ease-in-out;
+  z-index: 1;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+
+/* =========================
+   PARTÍCULAS 🔥
+========================= */
+.particles span {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #ff2a2a;
+  border-radius: 50%;
+  animation: floatParticle 6s infinite linear;
+}
+
+.particles span:nth-child(odd) {
+  background: #ff6b00;
+}
+
+@keyframes floatParticle {
+  from {
+    transform: translateY(100px) translateX(0);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(-300px) translateX(50px);
+    opacity: 1;
+  }
+}
+
+
+/* =========================
+   ILUSTRACIÓN COMIC
+========================= */
+.empty-art {
+  width: 180px;
+  margin-bottom: 1rem;
+  z-index: 2;
+  filter: drop-shadow(0 0 15px rgba(255,50,50,0.5));
+}
+
+
+/* =========================
+   GLITCH TEXTO 🔥
+========================= */
+.glitch-text {
+  position: relative;
+  color: white;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  z-index: 2;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.glitch-text::before {
+  color: red;
+  animation: glitchTop 1s infinite;
+}
+
+.glitch-text::after {
+  color: cyan;
+  animation: glitchBottom 1.2s infinite;
+}
+
+@keyframes glitchTop {
+  0% { clip-path: inset(0 0 80% 0); transform: translate(-2px, -2px); }
+  100% { clip-path: inset(0 0 60% 0); transform: translate(2px, 2px); }
+}
+
+@keyframes glitchBottom {
+  0% { clip-path: inset(60% 0 0 0); transform: translate(2px, 2px); }
+  100% { clip-path: inset(80% 0 0 0); transform: translate(-2px, -2px); }
+}
+
+
+/* =========================
+   PÁGINA GENERAL
+========================= */
+.carrito-page {
+  min-height: 100vh;
+  padding-top: 4rem;
+  background: linear-gradient(180deg, #0a0a0a 0%, #111 100%);
+}
+
+
+/* =========================
+   RESUMEN DEL CARRITO 🔥
+========================= */
+.resumen-carrito {
+  margin-top: 3rem;
+  text-align: center;
+  border-top: 1px solid #333;
+  padding-top: 2rem;
+}
+
+.total {
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+
+/* =========================
+   BOTONES (LAYOUT PRO)
+========================= */
+.acciones-carrito {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* BOTÓN PRINCIPAL (comprar) */
+.btn-comprar {
+  background: linear-gradient(135deg, #ff3223, #ff6b00);
+  min-width: 220px;
+}
+
+
+/* =========================
+   RESPONSIVE 🔥
+========================= */
+@media (max-width: 600px) {
+  .acciones-carrito {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-comprar,
+  .btn-vaciar {
+    width: 90%;
+  }
+}
+/* 🔥 BOTÓN COMPRAR CONTROLADO */
+.btn-tienda {
+  transform: none;
+}
+
+.btn-tienda:hover {
+  transform: translateY(-2px);
+}

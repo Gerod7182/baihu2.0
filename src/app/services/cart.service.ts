@@ -1,56 +1,66 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Product } from '../models/product.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
 
-  // Esta es la "antena" que actualiza el número en tiempo real
   private cartCountSubject = new BehaviorSubject<number>(0);
   cartCount$ = this.cartCountSubject.asObservable();
+
+  private cartUpdatedSubject = new BehaviorSubject<void>(undefined);
+  cartUpdated$ = this.cartUpdatedSubject.asObservable();
 
   constructor() {
     this.actualizarContador();
   }
 
-  // Cuenta cuántos productos hay en total
-  actualizarContador() {
-    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-    // Sumamos la cantidad de cada producto
-    const totalItems = carrito.reduce((acc: any, item: any) => acc + (item.cantidad || 1), 0);
-    this.cartCountSubject.next(totalItems);
+  private getCarrito(): Product[] {
+    return JSON.parse(localStorage.getItem('carrito') || '[]');
   }
 
-  agregarItem(nombreCodigo: string, img: string, precio: number) {
-    let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-    
-    const existente = carrito.find((item: any) => item.nombre === nombreCodigo);
-    
+  private setCarrito(carrito: Product[]) {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+  }
+
+  actualizarContador() {
+    const carrito = this.getCarrito();
+    const total = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+    this.cartCountSubject.next(total);
+  }
+
+  agregarItem(id: string, img: string, precio: number) {
+    let carrito = this.getCarrito();
+
+    const existente = carrito.find(item => item.id === id);
+
     if (existente) {
       existente.cantidad += 1;
     } else {
-      carrito.push({ id: Date.now(), nombre: nombreCodigo, img, precio, cantidad: 1 });
+      carrito.push({ id, img, precio, cantidad: 1 });
     }
 
-    localStorage.setItem('carrito', JSON.stringify(carrito));
+    this.setCarrito(carrito);
     this.actualizarContador();
+    this.cartUpdatedSubject.next();
   }
 
-  // --- LAS NUEVAS FUNCIONES DE BORRADO ---
-
-  eliminarItem(id: number) {
-    let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-    // Usamos .filter() para guardar todos MENOS el que tiene ese ID
-    carrito = carrito.filter((item: any) => item.id !== id);
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-    
-    // Avisamos al contador que el número bajó
+  eliminarItem(id: string) {
+    const carrito = this.getCarrito().filter(item => item.id !== id);
+    this.setCarrito(carrito);
     this.actualizarContador();
+    this.cartUpdatedSubject.next();
   }
 
   vaciarCarrito() {
-    localStorage.setItem('carrito', '[]');
+    this.setCarrito([]);
     this.actualizarContador();
+    this.cartUpdatedSubject.next();
+  }
+
+  obtenerItems(): Product[] {
+    return this.getCarrito();
   }
 }

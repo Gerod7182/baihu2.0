@@ -1,0 +1,300 @@
+/* =========================
+   HEADER BASE
+========================= */
+.main-header {
+  background: rgba(10,10,10,0.95);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid #111;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* CONTENEDOR */
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.8rem 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* =========================
+   LOGO 🔥
+========================= */
+.logo-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+  color: #fff;
+
+  text-shadow:
+    0 0 5px #ff3223,
+    0 0 10px #ff3223,
+    0 0 20px #ff0000;
+}
+
+/* =========================
+   NAV LINKS
+========================= */
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-list a {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  color: #aaa;
+  text-decoration: none;
+  position: relative;
+  transition: 0.3s;
+}
+
+/* EFECTO HOVER TIPO STREET */
+.nav-list a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, #ff3223, #ff6b00);
+  transition: 0.3s;
+}
+
+.nav-list a:hover {
+  color: #fff;
+  text-shadow: 0 0 8px #ff3223;
+}
+
+.nav-list a:hover::after {
+  width: 100%;
+}
+
+/* =========================
+   SEARCH 🔍
+========================= */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #0f0f0f;
+  border: 1px solid #222;
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+}
+
+.search-icon {
+  color: #666;
+  margin-right: 5px;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  width: 100px;
+  transition: 0.3s;
+}
+
+.search-input:focus {
+  width: 160px;
+}
+
+/* =========================
+   ICONOS ⚡
+========================= */
+.icon-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon-group i {
+  color: #aaa;
+  transition: 0.3s;
+  font-size: 1.1rem;
+}
+
+.icon-group i:hover {
+  color: #fff;
+  text-shadow: 0 0 8px #ff3223;
+  transform: scale(1.15);
+}
+
+/* CARRITO 🔥 */
+.cart {
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #ff3223;
+  color: #000;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  padding: 2px 5px;
+  font-weight: bold;
+}
+
+/* =========================
+   LANGUAGE
+========================= */
+/* CONTENEDOR */
+.lang-container {
+  position: relative;
+  cursor: pointer;
+}
+
+/* ICONO */
+.lang-icon {
+  background: #111;
+  border: 1px solid #ff3223;
+  color: #ff3223;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.lang-icon:hover {
+  box-shadow: 0 0 10px #ff3223;
+  transform: scale(1.05);
+}
+
+/* DROPDOWN */
+.lang-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: #111;
+  border: 1px solid #ff3223;
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 160px;
+  z-index: 999;
+
+  animation: fadeIn 0.2s ease;
+}
+
+/* OPCIONES */
+.lang-menu div {
+  padding: 10px;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  transition: 0.3s;
+}
+
+.lang-menu div:hover {
+  background: #ff3223;
+  color: #000;
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* =========================
+   BOTÓN LOGOUT
+========================= */
+.logout-btn {
+  background: transparent;
+  border: 1px solid #ff3223;
+  color: #ff3223;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #ff3223;
+  color: #000;
+}
+
+/* =========================
+   MOBILE 🔥🔥🔥
+========================= */
+@media (max-width: 768px) {
+
+  .header-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-list {
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    display: none;
+  }
+
+  .logo-text {
+    font-size: 1.2rem;
+  }
+
+  .icon-group {
+    gap: 1.2rem;
+  }
+
+  .icon-group a[href*="github"] {
+    display: none;
+  }
+}
+.nav-list a:hover {
+  color: #ff3223;
+  text-shadow: 0 0 8px #ff3223;
+}
+
+.logo-text {
+  color: #fff;
+  letter-spacing: 3px;
+}
+/* 🔥 contador mejorado */
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #ff3223;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  padding: 3px 6px;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(255,50,35,0.7);
+}
+
+/* 🔥 selector idioma PRO */
+.language-selector select {
+  background: linear-gradient(145deg, #0a0a0a, #111);
+  color: #fff;
+  border: 1px solid rgba(255,50,35,0.4);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-family: 'Orbitron';
+  cursor: pointer;
+}
+
+.language-selector select:hover {
+  border-color: #ff3223;
+  box-shadow: 0 0 10px rgba(255,50,35,0.5);
+}
+
+.language-selector option {
+  background: #0a0a0a;
+  color: #fff;
+}

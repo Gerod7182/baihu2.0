@@ -1,0 +1,24 @@
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: linear-gradient(135deg, #ff3223, #ff6b00);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: 'Orbitron', sans-serif;
+  box-shadow: 0 0 20px rgba(255,50,35,0.5);
+  z-index: 9999;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

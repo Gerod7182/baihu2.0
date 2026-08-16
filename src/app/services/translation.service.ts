@@ -18,7 +18,7 @@ export class TranslationService {
       "buscar-placeholder": "Buscar productos...",
       
       // Home & Secciones
-      "hero-titulo": "Arte que cobra vida. Estilo que deja huella.",
+      "slogan": "Arte que cobra vida. Estilo que deja huella.",
       "sec-camisetas": "Camisetas",
       "sec-stickers": "Stickers",
       "sec-posters": "Posters",
@@ -125,7 +125,8 @@ export class TranslationService {
       "buscar-placeholder": "Search products...",
 
       // Home & Sections
-      "hero-titulo": "YOUR STYLE, YOUR ATTITUDE.",
+      "slogan": "Art that comes to life. Style that leaves a mark.",
+"btn-explorar": "Explore shop" ,
       "sec-camisetas": "T-Shirts",
       "sec-stickers": "Stickers",
       "sec-posters": "Posters",
@@ -190,7 +191,6 @@ export class TranslationService {
       "carrito-titulo": "Your Cart",
       "carrito-vacio-titulo": "So empty? 👻",
       "carrito-vacio-sub": "Art is waiting for you. Don't leave your style blank.",
-      "btn-explorar": "Explore Shop",
       "btn-agregar": "Add to cart",
       "btn-eliminar": "Remove",
       "btn-vaciar": "Empty Cart",
@@ -232,7 +232,8 @@ export class TranslationService {
       "buscar-placeholder": "Buscar produtos...",
 
       // Home & Seções
-      "hero-titulo": "SEU ESTILO, SUA ATITUDE.",
+      "slogan": "Arte que ganha vida. Estilo que deixa marca.",
+"btn-explorar": "Explorar loja",
       "sec-camisetas": "Camisetas",
       "sec-stickers": "Adesivos",
       "sec-posters": "Pôsteres",
@@ -273,7 +274,6 @@ export class TranslationService {
       "carrito-titulo": "Seu Carrinho",
       "carrito-vacio-titulo": "Tão vazio? 👻",
       "carrito-vacio-sub": "A arte está esperando por você. Não deixe seu estilo em branco.",
-      "btn-explorar": "Explorar a Loja",
       "btn-agregar": "Adicionar ao carrinho",
       "btn-eliminar": "Remover",
       "btn-vaciar": "Esvaziar Carrinho",
@@ -326,4 +326,7 @@ export class TranslationService {
   obtenerTextos(idioma: string) {
     return this.traducciones[idioma];
   }
+  obtenerTexto(key: string, idioma: string): string {
+  return this.traducciones[idioma]?.[key] || key;
+}
 }

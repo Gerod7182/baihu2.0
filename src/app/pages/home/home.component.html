@@ -1,75 +1,159 @@
-<section class="hero">
+<section class="hero-home">
+
   <div class="hero-content">
-    <h1 class="hero-title" id="hero-titulo">{{ textos['hero-titulo'] }}</h1>
+
+    <p class="hero-sub">
+      {{ textos['slogan'] }}
+    </p>
+
+    <a href="#camisetas" class="btn-baihu">
+      {{ textos['btn-explorar'] }}
+    </a>
+
   </div>
+
 </section>
 
+<!-- =========================
+     CAMISETAS 🔥
+========================= -->
 <section id="camisetas" class="category-section">
-  <h2>{{ textos['sec-camisetas'] }}</h2>
+
+  <h2 class="section-title">
+    {{ textos['sec-camisetas'] }}
+  </h2>
+
   <div class="gallery-grid">
-    
-    <div class="product-card" *ngFor="let item of camisetas">
-      <img [src]="item.img" [alt]="textos[item.codigo]">
-      <h3>{{ textos[item.codigo] }}</h3>
-      <p class="price">$ {{ item.precio | number }}</p>
-      <button class="hero-btn" (click)="agregarAlCarrito(item.codigo, item.img, item.precio)">
+
+    <div class="product-card" *ngFor="let producto of camisetas">
+
+      <div class="img-container">
+        <img [src]="producto.img">
+      </div>
+
+      <h3>
+        {{ textos[producto.id] }}
+      </h3>
+
+      <p class="price">
+        {{ producto.precio | number }}
+      </p>
+
+      <button 
+        class="btn-tienda"
+        (click)="agregarAlCarrito(producto.id, producto.img, producto.precio)">
+
         {{ textos['btn-agregar'] }}
+
       </button>
+
     </div>
 
   </div>
+
 </section>
 
+<!-- =========================
+     STICKERS 🔥
+========================= -->
 <section id="stickers" class="category-section">
-  <h2>{{ textos['sec-stickers'] }}</h2>
+
+  <h2 class="section-title">
+    {{ textos['sec-stickers'] }}
+  </h2>
+
   <div class="gallery-grid">
-    
+
     <div class="product-card" *ngFor="let item of stickers">
-      <img [src]="item.img" [alt]="textos[item.codigo]">
-      <h3>{{ textos[item.codigo] }}</h3>
-      <p class="price">$ {{ item.precio | number }}</p>
-      <button class="hero-btn" (click)="agregarAlCarrito(item.codigo, item.img, item.precio)">
+
+      <div class="img-container">
+        <img [src]="item.img" [alt]="textos[item.id]">
+      </div>
+
+      <h3>
+        {{ textos[item.id] }}
+      </h3>
+
+      <p class="price">
+        COP {{ item.precio | number }}
+      </p>
+
+      <button
+        class="btn-tienda"
+        (click)="agregarAlCarrito(item.id, item.img, item.precio)">
+
         {{ textos['btn-agregar'] }}
+
       </button>
+
     </div>
 
   </div>
+
 </section>
 
+<!-- =========================
+     POSTERS 🔥
+========================= -->
 <section id="posters" class="category-section">
-  <h2>{{ textos['sec-posters'] }}</h2>
+
+  <h2 class="section-title">
+    {{ textos['sec-posters'] }}
+  </h2>
+
   <div class="gallery-grid">
-    
+
     <div class="product-card" *ngFor="let item of posters">
-      <img [src]="item.img" [alt]="textos[item.codigo]">
-      <h3>{{ textos[item.codigo] }}</h3>
-      <p class="price">$ {{ item.precio | number }}</p>
-      <button class="hero-btn" (click)="agregarAlCarrito(item.codigo, item.img, item.precio)">
+
+      <div class="img-container">
+        <img [src]="item.img" [alt]="textos[item.id]">
+      </div>
+
+      <h3>
+        {{ textos[item.id] }}
+      </h3>
+
+      <p class="price">
+        COP {{ item.precio | number }}
+      </p>
+
+      <button
+        class="btn-tienda"
+        (click)="agregarAlCarrito(item.id, item.img, item.precio)">
+
         {{ textos['btn-agregar'] }}
+
       </button>
+
     </div>
 
   </div>
+
 </section>
 
-<section id="comentarios" class="comentarios">
-  <h2>{{ textos['sec-comentarios'] }}</h2>
-  <p>{{ textos['txt-comentarios'] }}</p>
-  
-  <form action="https://formspree.io/f/xkgrznae" method="POST">
-    <label for="name">{{ textos['lbl-nombre'] }}:</label>
-    <input type="text" name="name" required>
-    
-    <label for="email">{{ textos['lbl-email'] }}:</label>
-    <input type="email" name="email" required>
-    
-    <label for="comment">{{ textos['lbl-comentario'] }}:</label>
-    <textarea name="comment" rows="5" required></textarea>
-    
-    <button type="submit">{{ textos['btn-enviar'] }}</button>
-  </form>
-</section>
+<!-- =========================
+     TOAST CARRITO 🔥
+========================= -->
+<div id="notificacion-carrito" [class.activa]="notificacionVisible">
 
-<div id="notificacion-carrito" class="notificacion-oculta" [class.activa]="notificacionVisible">
-  <span id="notificacion-mensaje">{{ notificacionMensaje }}</span>
+  <span>
+    {{ notificacionMensaje }}
+  </span>
+
+</div>
+<!-- =========================
+     QR FLOTANTE 🔥
+========================= -->
+<div class="qr-floating">
+
+  <p class="qr-label">
+    Escanea
+  </p>
+
+  <img 
+    src="assets/img/qr-baihu.png"
+    alt="QR BaihuArt"
+    class="qr-img"
+  >
+
 </div>

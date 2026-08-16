@@ -96,12 +96,11 @@ export class GaleriaComponent implements OnInit {
 
   constructor(private translationService: TranslationService) { }
 
-  ngOnInit(): void {
-    this.translationService.idioma$.subscribe(idioma => {
-      this.textos = this.translationService.obtenerTextos(idioma);
-    });
-  }
-
+ngOnInit(): void {
+  this.translationService.idioma$.subscribe(idioma => {
+    this.textos = this.translationService.obtenerTextos(idioma);
+  });
+}
   filtrar(categoria: string) {
     this.filtroActivo = categoria;
   }

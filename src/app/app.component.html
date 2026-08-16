@@ -1,3 +1,8 @@
 <app-navbar></app-navbar>
 
 <router-outlet></router-outlet>
+
+<!-- 🔥 TOAST -->
+<div class="toast" *ngIf="toastVisible">
+  {{ toastMensaje }}
+</div>

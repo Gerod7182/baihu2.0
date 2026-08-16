@@ -5,7 +5,8 @@ import { GaleriaComponent } from './pages/galeria/galeria.component';
 import { OfertasComponent } from './pages/ofertas/ofertas.component';
 import { CarritoComponent } from './pages/carrito/carrito.component';
 import { LoginComponent } from './pages/login/login.component';
-import { AdminComponent } from './pages/admin/admin.component'; // <--- Importamos el Admin
+import { AdminComponent } from './pages/admin/admin.component';
+import { GraciasComponent } from './pages/gracias/gracias.component'; // 🔥 FALTABA
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -13,8 +14,9 @@ const routes: Routes = [
   { path: 'ofertas', component: OfertasComponent },
   { path: 'carrito', component: CarritoComponent },
   { path: 'login', component: LoginComponent },
-  
-  // Agregamos la ruta del administrador
+
+  { path: 'gracias', component: GraciasComponent }, // 🔥 ESTA ES LA CLAVE
+
   { path: 'admin', component: AdminComponent },
 
   { path: '**', redirectTo: '' }

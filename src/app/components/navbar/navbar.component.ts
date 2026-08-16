@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslationService } from '../../services/translation.service';
-import { CartService } from '../../services/cart.service'; // <--- ¡ESTA ERA LA LÍNEA QUE FALTABA!
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,54 +9,75 @@ import { CartService } from '../../services/cart.service'; // <--- ¡ESTA ERA LA
 })
 export class NavbarComponent implements OnInit {
 
-  cartCount: number = 0;
-  usuario: any = null;
-  textos: any = {}; 
+  cartCount = 0;
+  textos: any = {};
+  nombreUsuario = '';
+  mostrarLogout = false;
+
+  idioma: string = 'es';
+
+  // 🔥 NUEVO: control del menú de idioma
+  menuAbierto = false;
 
   constructor(
     private translationService: TranslationService,
-    private cartService: CartService // Ahora sí funcionará porque lo importamos arriba
-  ) { }
+    private cartService: CartService
+  ) {}
 
   ngOnInit(): void {
-    // 1. Cargar usuario (si hay alguien logueado)
-    this.cargarUsuario();
-    
-    // 2. Suscribirse a cambios de idioma
+
+    // 🔥 idioma reactivo
     this.translationService.idioma$.subscribe(idioma => {
+      this.idioma = idioma;
       this.textos = this.translationService.obtenerTextos(idioma);
     });
 
-    // 3. Suscribirse al contador del carrito
-    // (Esto reemplaza tu antigua función 'leerDatosLocales' para el carrito)
-    this.cartService.cartCount$.subscribe(numero => {
-      this.cartCount = numero;
+    // 🔥 carrito en tiempo real
+    this.cartService.cartCount$.subscribe(count => {
+      this.cartCount = count;
     });
+
+    // 🔥 usuario
+    this.cargarUsuario();
   }
 
-  cambiarIdioma(evento: any) {
-    const nuevoIdioma = evento.target.value;
-    this.translationService.cambiarIdioma(nuevoIdioma);
+  // =========================
+  // 🌐 IDIOMA (NUEVO SISTEMA)
+  // =========================
+
+  toggleLangMenu(): void {
+    this.menuAbierto = !this.menuAbierto;
   }
 
-  cargarUsuario() {
+  seleccionarIdioma(id: string): void {
+    this.translationService.cambiarIdioma(id);
+    this.menuAbierto = false;
+  }
+
+  // =========================
+  // 👤 USUARIO
+  // =========================
+
+  cargarUsuario(): void {
     const usuarioGuardado = localStorage.getItem('usuario');
-    if (usuarioGuardado) {
-      this.usuario = JSON.parse(usuarioGuardado);
-      
-      // Si usas el ID en el HTML para mostrar el nombre:
-      const elementoNombre = document.getElementById('nombreUsuarioHeader');
-      const btnLogout = document.getElementById('btn-logout');
-      
-      if (elementoNombre && this.usuario.nombre) {
-        elementoNombre.innerText = this.usuario.nombre;
-        // Mostrar botón de cerrar sesión si quieres
-        if (btnLogout) btnLogout.style.display = 'inline-block';
-      }
+
+    if (!usuarioGuardado) {
+      this.nombreUsuario = '';
+      this.mostrarLogout = false;
+      return;
+    }
+
+    try {
+      const usuario = JSON.parse(usuarioGuardado);
+      this.nombreUsuario = usuario?.nombre ?? '';
+      this.mostrarLogout = !!this.nombreUsuario;
+    } catch {
+      this.nombreUsuario = '';
+      this.mostrarLogout = false;
     }
   }
 
-  cerrarSesion() {
+  cerrarSesion(): void {
     localStorage.removeItem('usuario');
     window.location.reload();
   }

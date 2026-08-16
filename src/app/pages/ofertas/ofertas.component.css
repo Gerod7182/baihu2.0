@@ -1,0 +1,273 @@
+:host {
+  display: block;
+  background: #0a0a0a;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 50, 35, 0.08), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05), transparent 40%);
+  color: #fff;
+}
+
+.hero-ofertas {
+  height: 60vh;
+  background: url('/assets/img/sabiosamu.png') center 35%/cover no-repeat;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-ofertas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.58), rgba(0,0,0,0.9));
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 1rem;
+}
+
+.hero-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 0 0 16px rgba(255, 50, 35, 0.35);
+}
+
+.offers-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1rem 5rem;
+}
+
+.section-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #ff3223, transparent);
+  display: block;
+  margin-top: 8px;
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.offer-card {
+  background: linear-gradient(145deg, #0a0a0a, #111);
+  border: 1px solid rgba(255, 50, 35, 0.2);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+  isolation: isolate;
+}
+
+.offer-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 25px rgba(255, 50, 35, 0.35);
+}
+
+.offer-image {
+  padding: 1rem;
+  background: #050505;
+}
+
+.offer-image img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+}
+
+.offer-body {
+  padding: 0 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.offer-name {
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.25;
+  min-height: 2.6em;
+}
+
+.offer-prices {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.old-price {
+  color: #8f8f8f;
+  text-decoration: line-through;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+}
+
+.new-price {
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(255,50,35,0.45);
+}
+
+.btn-tienda {
+  width: 100%;
+  margin-top: auto;
+  padding: 12px;
+  border: 2px solid #ff3223;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 1px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.btn-tienda::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255,50,35,0.5), transparent);
+  transform: translateX(-100%);
+  transition: 0.5s;
+  pointer-events: none;
+}
+
+.btn-tienda:hover::before {
+  transform: translateX(100%);
+}
+
+.btn-tienda:hover {
+  background: #ff3223;
+  box-shadow: 0 0 15px #ff3223;
+}
+
+#notificacion-carrito {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: #27ae60;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: all 0.4s ease;
+  z-index: 9999;
+}
+
+#notificacion-carrito.activa {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+#notificacion-carrito span {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 1.8rem;
+  }
+
+  .offers-section {
+    padding-top: 3rem;
+  }
+}
+:host {
+  display: block;
+  background: #0a0a0a;
+  color: #fff;
+}
+
+/* 🔥 fondo japonés oscuro */
+.gallery-section {
+  padding: 2rem;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,50,35,0.1), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05), transparent 40%),
+    #0a0a0a;
+}
+
+/* TITULO */
+#ofertas-subtitulo {
+  font-family: 'Orbitron';
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+}
+
+/* GRID */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+/* CARD */
+.gallery-item {
+  background: linear-gradient(145deg, #0a0a0a, #111);
+  border: 1px solid rgba(255,50,35,0.2);
+  border-radius: 10px;
+  padding: 1rem;
+  transition: 0.3s;
+}
+
+.gallery-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(255,50,35,0.3);
+}
+
+/* BOTÓN */
+.hero-btn {
+  width: 100%;
+  margin-top: 1rem;
+  border: 2px solid #ff3223;
+  background: transparent;
+  color: #fff;
+  font-family: 'Orbitron';
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.hero-btn:hover {
+  background: #ff3223;
+  box-shadow: 0 0 15px #ff3223;
+}

@@ -17,19 +17,19 @@ export class OfertasComponent implements OnInit {
   listaOfertas = [
     { 
       codigo: 'oferta1-nombre', 
-      img: 'assets/img/camiseta1.jpg', 
+      img: 'assets/img/helmet.png', 
       precioAntes: 40000, 
       precioAhora: 25000 
     },
     { 
       codigo: 'oferta2-nombre', 
-      img: 'assets/img/phonecase1.jpg', 
+      img: 'assets/img/armor.png', 
       precioAntes: 50000, 
       precioAhora: 45000 
     },
     { 
       codigo: 'oferta3-nombre', 
-      img: 'assets/img/hoodie1.jpg', 
+      img: 'assets/img/cofre.png', 
       precioAntes: 145000, 
       precioAhora: 115000 
     }
@@ -40,11 +40,11 @@ export class OfertasComponent implements OnInit {
     private cartService: CartService
   ) {}
 
-  ngOnInit(): void {
-    this.translationService.idioma$.subscribe(idioma => {
-      this.textos = this.translationService.obtenerTextos(idioma);
-    });
-  }
+ ngOnInit(): void {
+  this.translationService.idioma$.subscribe(idioma => {
+    this.textos = this.translationService.obtenerTextos(idioma);
+  });
+}
 
   agregarAlCarrito(codigoNombre: string, img: string, precio: number) {
     this.cartService.agregarItem(codigoNombre, img, precio);

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslationService } from '../../services/translation.service';
-import { CartService } from '../../services/cart.service'; // <--- 1. Importar
+import { CartService } from '../../services/cart.service';
+import { Router } from '@angular/router'; // 🔥 IMPORTANTE
 
 @Component({
   selector: 'app-carrito',
@@ -15,7 +16,8 @@ export class CarritoComponent implements OnInit {
 
   constructor(
     private translationService: TranslationService,
-    private cartService: CartService // <--- 2. Inyectar
+    private cartService: CartService,
+    private router: Router // 🔥 INYECTAMOS ROUTER
   ) {}
 
   ngOnInit(): void {
@@ -27,29 +29,44 @@ export class CarritoComponent implements OnInit {
   }
 
   cargarCarrito() {
-    // Podemos leerlo directo del localStorage para mostrarlo
     this.carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
     this.calcularTotal();
   }
 
   calcularTotal() {
-    this.total = this.carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+    this.total = this.carrito.reduce(
+      (acc, item) => acc + (item.precio * item.cantidad),
+      0
+    );
   }
 
   eliminarItem(id: number) {
-    // 3. Usar el servicio para eliminar (esto actualiza la bolita roja)
-    this.cartService.eliminarItem(id);
-    
-    // Recargamos la lista local para que desaparezca de la pantalla
+    this.cartService.eliminarItem(id.toString());
     this.cargarCarrito();
   }
 
   vaciarCarrito() {
-    // 4. Usar el servicio para vaciar
     this.cartService.vaciarCarrito();
-    
-    // Limpiamos la vista
     this.carrito = [];
     this.total = 0;
+  }
+
+  // 🔥 FINALIZAR COMPRA PRO
+  finalizarCompra() {
+
+    if (this.carrito.length === 0) return;
+
+    // Guardamos compra simulada
+    localStorage.setItem('ultimaCompra', JSON.stringify({
+      items: this.carrito,
+      total: this.total,
+      fecha: new Date()
+    }));
+
+    // Vaciar carrito
+    this.cartService.vaciarCarrito();
+
+    // 🔥 NAVEGACIÓN CORRECTA ANGULAR
+    this.router.navigate(['/gracias']);
   }
 }

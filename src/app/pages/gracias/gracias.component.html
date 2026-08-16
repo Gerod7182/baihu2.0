@@ -1,0 +1,32 @@
+<section class="gracias-page">
+
+  <!-- PORTAL -->
+  <div class="portal"></div>
+
+  <!-- PARTÍCULAS -->
+  <div class="particles">
+    <span *ngFor="let p of [].constructor(25)"></span>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="gracias-content">
+
+    <div class="success-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+
+    <h1 class="glitch" data-text="COMPRA COMPLETADA">
+      COMPRA COMPLETADA
+    </h1>
+
+    <p class="mensaje">
+      {{ textos['gracias-msg'] || 'Tu pedido fue procesado correctamente (simulación).' }}
+    </p>
+
+    <button (click)="volverTienda()" class="hero-btn btn-volver">
+      {{ textos['btn-volver'] || 'Volver a la tienda' }}
+    </button>
+
+  </div>
+
+</section>
