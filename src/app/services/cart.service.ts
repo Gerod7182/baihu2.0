@@ -27,8 +27,7 @@ export class CartService {
 
   actualizarContador() {
     const carrito = this.getCarrito();
-    const total = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-    this.cartCountSubject.next(total);
+const total = carrito.reduce((acc, item) => acc + (item.cantidad ?? 0), 0);    this.cartCountSubject.next(total);
   }
 
   agregarItem(id: string, img: string, precio: number) {
@@ -37,7 +36,7 @@ export class CartService {
     const existente = carrito.find(item => item.id === id);
 
     if (existente) {
-      existente.cantidad += 1;
+      existente.cantidad = (existente.cantidad ?? 0) + 1;
     } else {
       carrito.push({ id, img, precio, cantidad: 1 });
     }

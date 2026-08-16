@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TranslationService } from '../../services/translation.service';
 import { CartService } from '../../services/cart.service';
+import { ProductService } from '../../services/product.service';
+import { Product } from '../../models/product.model';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -16,7 +18,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private sub!: Subscription;
 
-  camisetas = [
+  camisetas: Product[] = [
     { id: 'prod-cam-vi', img: 'assets/img/1.jpg', precio: 50000 },
     { id: 'prod-cam-tigre', img: 'assets/img/2.jpg', precio: 50000 },
     { id: 'prod-cam-dragon', img: 'assets/img/3.jpg', precio: 50000 },
@@ -24,14 +26,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     { id: 'prod-cam-yugioh', img: 'assets/img/5.png', precio: 50000 }
   ];
 
-  stickers = [
+  stickers: Product[] = [
     { id: 'prod-stick-fenix', img: 'assets/img/stickerfenix.png', precio: 5000 },
     { id: 'prod-stick-thunder', img: 'assets/img/dragon sticker-01.png', precio: 5000 },
     { id: 'prod-stick-iron', img: 'assets/img/sticker tigre.png', precio: 5000 },
     { id: 'prod-stick-stone', img: 'assets/img/sticker cobra.png', precio: 5000 }
   ];
 
-  posters = [
+  posters: Product[] = [
     { id: 'prod-post-burst', img: 'assets/img/burstinatrix.png', precio: 20000 },
     { id: 'prod-post-vi', img: 'assets/img/VI.png', precio: 20000 },
     { id: 'prod-post-vader', img: 'assets/img/vader.png', precio: 20000 },
@@ -44,7 +46,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private translationService: TranslationService,
-    private cartService: CartService
+    private cartService: CartService,
+    private productService: ProductService
   ) {}
 
  ngOnInit(): void {
@@ -56,10 +59,24 @@ export class HomeComponent implements OnInit, OnDestroy {
   window.addEventListener('cartUpdated', () => {
     this.mostrarNotificacion("Producto agregado 🔥");
   });
+
+  // Traer productos agregados desde el panel /admin y sumarlos
+  // a los que ya estaban escritos en el código.
+  this.productService.obtenerPorCategoria('camisetas').subscribe(productos => {
+    this.camisetas = [...this.camisetas, ...productos];
+  });
+
+  this.productService.obtenerPorCategoria('stickers').subscribe(productos => {
+    this.stickers = [...this.stickers, ...productos];
+  });
+
+  this.productService.obtenerPorCategoria('posters').subscribe(productos => {
+    this.posters = [...this.posters, ...productos];
+  });
 }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    this.sub?.unsubscribe();
   }
 
  agregarAlCarrito(id: string, img: string, precio: number) {

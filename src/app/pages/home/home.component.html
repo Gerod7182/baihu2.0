@@ -32,7 +32,7 @@
       </div>
 
       <h3>
-        {{ textos[producto.id] }}
+        {{ producto.nombre || textos[producto.id] }}
       </h3>
 
       <p class="price">
@@ -67,11 +67,11 @@
     <div class="product-card" *ngFor="let item of stickers">
 
       <div class="img-container">
-        <img [src]="item.img" [alt]="textos[item.id]">
+        <img [src]="item.img" [alt]="item.nombre || textos[item.id]">
       </div>
 
       <h3>
-        {{ textos[item.id] }}
+        {{ item.nombre || textos[item.id] }}
       </h3>
 
       <p class="price">
@@ -110,7 +110,7 @@
       </div>
 
       <h3>
-        {{ textos[item.id] }}
+        {{ item.nombre || textos[item.id] }}
       </h3>
 
       <p class="price">

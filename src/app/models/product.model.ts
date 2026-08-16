@@ -2,5 +2,8 @@ export interface Product {
   id: string;
   img: string;
   precio: number;
-  cantidad: number;
+  cantidad?: number;
+  nombre?: string;
+  codigo?: string;
+  categoria?: string;
 }
