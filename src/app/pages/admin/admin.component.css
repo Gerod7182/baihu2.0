@@ -1,0 +1,340 @@
+/* =========================================================
+   PANEL DE TINTA — sistema visual del admin de baihuart
+   Paleta plana (3 tonos + tinta), contornos gruesos,
+   sombras duras sin difuminado. Sin degradados.
+   ========================================================= */
+
+:host {
+  --ink: #0a0a0a;
+  --panel: #17171a;
+  --paper: #efe8d8;
+  --red: #ff2b1f;
+  --line: #000000;
+  --muted: #8a877e;
+}
+
+.admin-wrap {
+  padding: 6rem 1.5rem 5rem;
+  background: var(--ink);
+  color: var(--paper);
+  min-height: 100vh;
+}
+
+.admin-title {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 800;
+  color: var(--red);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.admin-subtitle {
+  text-align: center;
+  color: var(--muted);
+  font-family: 'Rajdhani', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.8rem;
+  margin-bottom: 3rem;
+}
+
+/* ---- Divisor tipo "canaleta" de cómic entre secciones ---- */
+.section-divider {
+  max-width: 950px;
+  margin: 4rem auto;
+  height: 6px;
+  background: var(--red);
+  position: relative;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  height: 6px;
+  width: 100%;
+  background: var(--ink);
+  border-top: 3px solid var(--line);
+  border-bottom: 3px solid var(--line);
+}
+.section-divider::after {
+  top: 6px;
+}
+
+/* ---- Tarjeta de formulario ("panel de tinta" principal) ---- */
+.ink-form {
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--panel);
+  border: 3px solid var(--line);
+  box-shadow: 6px 6px 0 var(--line);
+  padding: 2rem;
+  position: relative;
+}
+
+.ink-form__eyebrow {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  color: var(--red);
+  margin-bottom: 0.25rem;
+}
+
+.ink-form__title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: var(--paper);
+}
+
+.ink-form__hint {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--muted);
+  font-size: 0.82rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+.field {
+  margin-bottom: 1.1rem;
+  text-align: left;
+}
+
+.field label {
+  display: block;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.field input[type="text"],
+.field input[type="number"],
+.field input[type="file"],
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 11px 12px;
+  background: var(--paper);
+  border: 2px solid var(--line);
+  color: var(--ink);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.92rem;
+  box-sizing: border-box;
+}
+
+.field select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+                     linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+  background-position: calc(100% - 18px) center, calc(100% - 12px) center;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.field textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: #8a8578;
+}
+
+.upload-status {
+  color: var(--red);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  margin-top: 8px;
+}
+
+.upload-preview {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  margin-top: 10px;
+  border: 3px solid var(--line);
+  display: block;
+}
+
+/* ---- Botones planos, sombra dura, sin gradiente ---- */
+.btn-ink {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 13px;
+  background: var(--red);
+  color: var(--paper);
+  border: 3px solid var(--line);
+  box-shadow: 4px 4px 0 var(--line);
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn-ink:hover:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.btn-ink:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  width: 100%;
+  margin-top: 0.6rem;
+  padding: 11px;
+  background: transparent;
+  color: var(--paper);
+  border: 2px solid var(--muted);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.btn-ghost:hover {
+  border-color: var(--paper);
+}
+
+.form-message {
+  margin-top: 1rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+  color: #6fd17a;
+}
+
+/* ---- Lista / cuadrícula de tarjetas ---- */
+.list-heading {
+  max-width: 950px;
+  margin: 3rem auto 1rem;
+  font-family: 'Orbitron', sans-serif;
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 1.1rem;
+}
+
+.card-grid {
+  max-width: 950px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+  gap: 1.4rem;
+}
+
+.ink-card {
+  background: var(--panel);
+  border: 3px solid var(--line);
+  box-shadow: 5px 5px 0 var(--line);
+  position: relative;
+  padding-top: 8px;
+}
+
+/* Etiqueta tipo viñeta de cómic, esquina cortada */
+.ink-card__tag {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  background: var(--red);
+  color: var(--ink);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  padding: 4px 12px 4px 10px;
+  border: 3px solid var(--line);
+  border-left: none;
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 0% 100%);
+}
+
+.ink-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 3px solid var(--line);
+  background: #333;
+}
+
+.ink-card__body {
+  padding: 0.9rem 1rem 1rem;
+  text-align: left;
+}
+
+.ink-card__name {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  color: var(--paper);
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+
+.ink-card__meta {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.ink-card__meta .old {
+  text-decoration: line-through;
+  margin-right: 4px;
+}
+
+.ink-card__actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 0.85rem;
+}
+
+.ink-card__actions button {
+  flex: 1;
+  padding: 8px 4px;
+  border: 2px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+}
+
+.ink-card__actions button:hover {
+  background: var(--red);
+  color: var(--paper);
+}
+
+.ink-card__actions button.danger {
+  background: var(--ink);
+  color: var(--red);
+  border-color: var(--red);
+}
+
+.ink-card__actions button.danger:hover {
+  background: var(--red);
+  color: var(--ink);
+}

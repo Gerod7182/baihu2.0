@@ -18,31 +18,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private sub!: Subscription;
 
-  camisetas: Product[] = [
-    { id: 'prod-cam-vi', img: 'assets/img/1.jpg', precio: 50000 },
-    { id: 'prod-cam-tigre', img: 'assets/img/2.jpg', precio: 50000 },
-    { id: 'prod-cam-dragon', img: 'assets/img/3.jpg', precio: 50000 },
-    { id: 'prod-cam-cobra', img: 'assets/img/4.jpg', precio: 50000 },
-    { id: 'prod-cam-yugioh', img: 'assets/img/5.png', precio: 50000 }
-  ];
+  camisetas: Product[] = [];
 
-  stickers: Product[] = [
-    { id: 'prod-stick-fenix', img: 'assets/img/stickerfenix.png', precio: 5000 },
-    { id: 'prod-stick-thunder', img: 'assets/img/dragon sticker-01.png', precio: 5000 },
-    { id: 'prod-stick-iron', img: 'assets/img/sticker tigre.png', precio: 5000 },
-    { id: 'prod-stick-stone', img: 'assets/img/sticker cobra.png', precio: 5000 }
-  ];
+  stickers: Product[] = [];
 
-  posters: Product[] = [
-    { id: 'prod-post-burst', img: 'assets/img/burstinatrix.png', precio: 20000 },
-    { id: 'prod-post-vi', img: 'assets/img/VI.png', precio: 20000 },
-    { id: 'prod-post-vader', img: 'assets/img/vader.png', precio: 20000 },
-    { id: 'prod-post-hallo', img: 'assets/img/Myers.png', precio: 20000 },
-    { id: 'prod-post-cobra', img: 'assets/img/HEBI.png', precio: 20000 },
-    { id: 'prod-post-tigre', img: 'assets/img/BAIHU.png', precio: 20000 },
-    { id: 'prod-post-dragon', img: 'assets/img/dragonsword.png', precio: 20000 },
-    { id: 'prod-post-fenix', img: 'assets/img/fenghua.png', precio: 20000 }
-  ];
+  posters: Product[] = [];
 
   constructor(
     private translationService: TranslationService,

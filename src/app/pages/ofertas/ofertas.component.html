@@ -10,11 +10,11 @@
   <div class="offers-grid">
     <article class="offer-card" *ngFor="let oferta of listaOfertas">
       <div class="offer-image">
-        <img [src]="oferta.img" [alt]="textos[oferta.codigo]">
+        <img [src]="oferta.img" [alt]="obtenerNombre(oferta)">
       </div>
 
       <div class="offer-body">
-        <h3 class="offer-name">{{ textos[oferta.codigo] }}</h3>
+        <h3 class="offer-name">{{ obtenerNombre(oferta) }}</h3>
 
         <p class="offer-prices">
           <span class="old-price">COP {{ oferta.precioAntes | number }}</span>
@@ -23,7 +23,7 @@
 
         <button
           class="btn-tienda"
-          (click)="agregarAlCarrito(oferta.codigo, oferta.img, oferta.precioAhora)">
+          (click)="agregarAlCarrito(oferta)">
           {{ textos['btn-agregar'] }}
         </button>
       </div>

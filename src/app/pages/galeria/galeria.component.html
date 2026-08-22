@@ -26,9 +26,9 @@
     <div class="masonry-grid">
       <ng-container *ngFor="let item of itemsGaleria">
         <div class="masonry-item" *ngIf="mostrarItem(item.categoria)">
-          <figure (click)="abrirModal(item.img, textos[item.tituloKey], textos[item.descKey])">
-            <img [src]="item.img" [alt]="textos[item.tituloKey]">
-            <figcaption>{{ textos[item.tituloKey] }}</figcaption>
+          <figure (click)="abrirModal(item)">
+            <img [src]="item.img" [alt]="obtenerTitulo(item)">
+            <figcaption>{{ obtenerTitulo(item) }}</figcaption>
           </figure>
         </div>
       </ng-container>

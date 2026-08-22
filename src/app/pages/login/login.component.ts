@@ -14,6 +14,12 @@ export class LoginComponent implements OnInit {
   mensajeError: string = '';
   textos: any = {}; // <--- Variable para textos
 
+  // Pantalla de "revisa tu correo" tras registrarse
+  registroExitoso: boolean = false;
+  correoRegistrado: string = '';
+  reenviando: boolean = false;
+  mensajeReenvio: string = '';
+
   // Íconos disponibles para elegir en el registro (Font Awesome, ya cargado en el proyecto)
   iconosDisponibles: string[] = ['fa-dragon', 'fa-fire', 'fa-skull', 'fa-ghost', 'fa-crow', 'fa-spider', 'fa-cat', 'fa-hat-wizard'];
 
@@ -36,6 +42,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Suscripción al idioma
     this.translationService.idioma$.subscribe(idioma => {
       this.textos = this.translationService.obtenerTextos(idioma);
     });
@@ -61,16 +68,43 @@ export class LoginComponent implements OnInit {
     }
     try {
       await this.authService.register(this.datos.email, this.datos.password, this.datos.nombre, this.datos.avatar);
-      alert('¡Registro exitoso! Ahora inicia sesión.');
-      this.toggleModo();
+      // En vez de alert(), mostramos la pantalla de "revisa tu correo"
+      this.correoRegistrado = this.datos.email;
+      this.registroExitoso = true;
     } catch (error: any) {
       this.mostrarError(this.traducirError(error.code));
     }
   }
 
-  async entrar() {
+  async reenviarCorreo() {
+    this.reenviando = true;
     try {
-      await this.authService.login(this.datos.email, this.datos.password);
+      await this.authService.reenviarVerificacion();
+      this.mensajeReenvio = 'Correo reenviado correctamente.';
+    } catch {
+      this.mensajeReenvio = 'No se pudo reenviar, intenta de nuevo en un momento.';
+    }
+    this.reenviando = false;
+    setTimeout(() => this.mensajeReenvio = '', 4000);
+  }
+
+  volverALogin() {
+    this.registroExitoso = false;
+    this.esRegistro = false;
+  }
+
+   async entrar() {
+    try {
+      const credenciales = await this.authService.login(this.datos.email, this.datos.password);
+
+      if (!credenciales.user.emailVerified) {
+        // Cuenta válida pero sin verificar: reenviamos el link y mostramos la pantalla de espera
+        await this.authService.reenviarVerificacion();
+        this.correoRegistrado = this.datos.email;
+        this.registroExitoso = true;
+        return;
+      }
+
       this.router.navigate(['/']).then(() => {
         window.location.reload();
       });

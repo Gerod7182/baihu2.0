@@ -1,44 +1,211 @@
-<section class="admin-section" style="padding: 6rem 2rem; background: #111; color: white; min-height: 80vh; text-align: center;">
-  
-  <h1 style="font-family: 'Orbitron'; color: #ff3223; margin-bottom: 2rem;">Panel de Administración</h1>
+<section class="admin-wrap">
 
-  <div class="form-container" style="max-width: 500px; margin: auto; background: #222; padding: 2rem; border-radius: 10px;">
-    
-    <div style="margin-bottom: 1rem; text-align: left;">
-      <label>Nombre:</label>
-      <input [(ngModel)]="producto.nombre" type="text" placeholder="Ej: Camiseta Nueva" style="width: 100%; padding: 10px; background: #333; border: 1px solid #444; color: white;">
+  <h1 class="admin-title">Panel de Administración</h1>
+  <p class="admin-subtitle">baihuart · gestión de contenido</p>
+
+  <!-- =========================
+       🚚 MIGRACIÓN (una sola vez)
+       ========================= -->
+  <div class="ink-form" style="border-color: #ff9800; margin-bottom: 3rem;">
+    <div class="ink-form__eyebrow" style="color: #ff9800;">Herramienta única</div>
+    <h3 class="ink-form__title">Importar diseños originales</h3>
+    <p class="ink-form__hint">
+      Tus diseños de lanzamiento (los que ya tenías antes de este panel) viven directo en el código,
+      no en la base de datos — por eso no aparecen abajo para editar/eliminar. Dale click aquí
+      <strong>una sola vez</strong> para copiarlos a la base de datos y así poder gestionarlos igual que los nuevos.
+    </p>
+    <button (click)="migrarDisenosOriginales()" class="btn-ink" style="background: #ff9800;" [disabled]="migrando">
+      {{ migrando ? 'Migrando...' : 'Importar diseños originales' }}
+    </button>
+    <p *ngIf="mensajeMigracion" class="form-message">{{ mensajeMigracion }}</p>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- =========================
+       🛍️ PRODUCTOS
+       ========================= -->
+
+  <div class="ink-form">
+    <div class="ink-form__eyebrow">Tienda</div>
+    <h3 class="ink-form__title">{{ productoEditandoId ? 'Editando producto' : 'Agregar nuevo producto' }}</h3>
+
+    <div class="field">
+      <label>Nombre</label>
+      <input [(ngModel)]="producto.nombre" type="text" placeholder="Ej: Camiseta Nueva">
     </div>
 
-    <div style="margin-bottom: 1rem; text-align: left;">
-      <label>Código (único):</label>
-      <input [(ngModel)]="producto.codigo" type="text" placeholder="Ej: prod-cam-nueva" style="width: 100%; padding: 10px; background: #333; border: 1px solid #444; color: white;">
+    <div class="field">
+      <label>Código (único)</label>
+      <input [(ngModel)]="producto.codigo" type="text" placeholder="Ej: prod-cam-nueva">
     </div>
 
-    <div style="margin-bottom: 1rem; text-align: left;">
-      <label>Precio:</label>
-      <input [(ngModel)]="producto.precio" type="number" style="width: 100%; padding: 10px; background: #333; border: 1px solid #444; color: white;">
+    <div class="field">
+      <label>Precio</label>
+      <input [(ngModel)]="producto.precio" type="number">
     </div>
 
-    <div style="margin-bottom: 1rem; text-align: left;">
-      <label>Categoría:</label>
-      <select [(ngModel)]="producto.categoria" style="width: 100%; padding: 10px; background: #333; border: 1px solid #444; color: white;">
+    <div class="field">
+      <label>Categoría</label>
+      <select [(ngModel)]="producto.categoria">
         <option value="camisetas">Camisetas</option>
         <option value="stickers">Stickers</option>
         <option value="posters">Posters</option>
       </select>
     </div>
 
-    <div style="margin-bottom: 1rem; text-align: left;">
-      <label>URL Imagen:</label>
-      <input [(ngModel)]="producto.img" type="text" placeholder="https://..." style="width: 100%; padding: 10px; background: #333; border: 1px solid #444; color: white;">
+    <div class="field">
+      <label>Imagen</label>
+      <input type="text" [(ngModel)]="producto.img" placeholder="https://...">
+      <img *ngIf="producto.img" [src]="producto.img" class="upload-preview">
     </div>
 
-    <button (click)="guardarProducto()" class="hero-btn" style="width: 100%; margin-top: 1rem;">
-      Guardar en Firebase
+    <button (click)="guardarProducto()" class="btn-ink">
+      {{ productoEditandoId ? 'Actualizar producto' : 'Guardar en Firebase' }}
     </button>
 
-    <p *ngIf="mensaje" style="margin-top: 1rem; color: #27ae60; font-weight: bold;">{{ mensaje }}</p>
+    <button *ngIf="productoEditandoId" (click)="cancelarEdicionProducto()" class="btn-ghost">
+      Cancelar edición
+    </button>
 
+    <p *ngIf="mensaje" class="form-message">{{ mensaje }}</p>
+  </div>
+
+  <h3 class="list-heading">Productos guardados</h3>
+  <div class="card-grid">
+    <div *ngFor="let p of (productos$ | async)" class="ink-card">
+      <div class="ink-card__tag">{{ p.categoria }}</div>
+      <img [src]="p.img">
+      <div class="ink-card__body">
+        <div class="ink-card__name">{{ p.nombre }}</div>
+        <div class="ink-card__meta">${{ p.precio }}</div>
+        <div class="ink-card__actions">
+          <button (click)="editarProducto(p)">Editar</button>
+          <button (click)="duplicarProducto(p)">Duplicar</button>
+          <button (click)="eliminarProducto(p.id)" class="danger">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- =========================
+       🖼️ GALERÍA
+       ========================= -->
+
+  <div class="ink-form">
+    <div class="ink-form__eyebrow">Galería</div>
+    <h3 class="ink-form__title">{{ itemGaleriaEditandoId ? 'Editando imagen de galería' : 'Agregar imagen a la galería' }}</h3>
+
+    <div class="field">
+      <label>Título</label>
+      <input [(ngModel)]="itemGaleria.titulo" type="text" placeholder="Ej: Tigre Blanco">
+    </div>
+
+    <div class="field">
+      <label>Descripción</label>
+      <textarea [(ngModel)]="itemGaleria.descripcion" placeholder="Breve descripción del diseño"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Categoría</label>
+      <select [(ngModel)]="itemGaleria.categoria">
+        <option value="espiritual">Espiritual</option>
+        <option value="anime">Anime</option>
+        <option value="pop">Cultura Pop</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Imagen</label>
+      <input type="text" [(ngModel)]="itemGaleria.img" placeholder="https://...">
+      <img *ngIf="itemGaleria.img" [src]="itemGaleria.img" class="upload-preview">
+    </div>
+
+    <button (click)="guardarItemGaleria()" class="btn-ink">
+      {{ itemGaleriaEditandoId ? 'Actualizar imagen' : 'Agregar a la galería' }}
+    </button>
+
+    <button *ngIf="itemGaleriaEditandoId" (click)="cancelarEdicionGaleria()" class="btn-ghost">
+      Cancelar edición
+    </button>
+
+    <p *ngIf="mensajeGaleria" class="form-message">{{ mensajeGaleria }}</p>
+  </div>
+
+  <h3 class="list-heading">Imágenes en la galería</h3>
+  <div class="card-grid">
+    <div *ngFor="let item of (galeria$ | async)" class="ink-card">
+      <div class="ink-card__tag">{{ item.categoria }}</div>
+      <img [src]="item.img">
+      <div class="ink-card__body">
+        <div class="ink-card__name">{{ item.titulo }}</div>
+        <div class="ink-card__actions">
+          <button (click)="editarItemGaleria(item)">Editar</button>
+          <button (click)="eliminarItemGaleria(item.id)" class="danger">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- =========================
+       🔥 OFERTAS
+       ========================= -->
+
+  <div class="ink-form">
+    <div class="ink-form__eyebrow">Ofertas</div>
+    <h3 class="ink-form__title">{{ ofertaEditandoId ? 'Editando oferta' : 'Agregar nueva oferta' }}</h3>
+    <p class="ink-form__hint">Útil para paquetes/combos: ej. "Combo Dragón: camiseta + sticker + poster" con una sola foto y un precio especial.</p>
+
+    <div class="field">
+      <label>Nombre</label>
+      <input [(ngModel)]="oferta.nombre" type="text" placeholder="Ej: Combo Dragón">
+    </div>
+
+    <div class="field">
+      <label>Precio antes</label>
+      <input [(ngModel)]="oferta.precioAntes" type="number">
+    </div>
+
+    <div class="field">
+      <label>Precio ahora (con descuento)</label>
+      <input [(ngModel)]="oferta.precioAhora" type="number">
+    </div>
+
+    <div class="field">
+      <label>Imagen</label>
+      <input type="text" [(ngModel)]="oferta.img" placeholder="https://...">
+      <img *ngIf="oferta.img" [src]="oferta.img" class="upload-preview">
+    </div>
+
+    <button (click)="guardarOferta()" class="btn-ink">
+      {{ ofertaEditandoId ? 'Actualizar oferta' : 'Publicar oferta' }}
+    </button>
+
+    <button *ngIf="ofertaEditandoId" (click)="cancelarEdicionOferta()" class="btn-ghost">
+      Cancelar edición
+    </button>
+
+    <p *ngIf="mensajeOferta" class="form-message">{{ mensajeOferta }}</p>
+  </div>
+
+  <h3 class="list-heading">Ofertas activas</h3>
+  <div class="card-grid">
+    <div *ngFor="let o of (ofertas$ | async)" class="ink-card">
+      <div class="ink-card__tag">Oferta</div>
+      <img [src]="o.img">
+      <div class="ink-card__body">
+        <div class="ink-card__name">{{ o.nombre }}</div>
+        <div class="ink-card__meta"><span class="old">${{ o.precioAntes }}</span>${{ o.precioAhora }}</div>
+        <div class="ink-card__actions">
+          <button (click)="editarOferta(o)">Editar</button>
+          <button (click)="eliminarOferta(o.id)" class="danger">Eliminar</button>
+        </div>
+      </div>
+    </div>
   </div>
 
 </section>

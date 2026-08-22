@@ -19,7 +19,8 @@ export class AdminGuard implements CanActivate {
     return authState(this.auth).pipe(
       take(1),
       map(usuario => {
-        if (usuario && usuario.email === ADMIN_EMAIL) {
+        // Ahora exige además que el correo esté verificado
+        if (usuario && usuario.email === ADMIN_EMAIL && usuario.emailVerified) {
           return true;
         }
         this.router.navigate(['/login']);

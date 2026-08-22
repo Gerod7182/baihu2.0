@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslationService } from '../../services/translation.service';
 import { CartService } from '../../services/cart.service';
+import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-ofertas',
@@ -13,44 +15,38 @@ export class OfertasComponent implements OnInit {
   notificacionVisible = false;
   notificacionMensaje = '';
 
-  // --- DATOS LIMPIOS: Solo cambias esto para agregar ofertas ---
-  listaOfertas = [
-    { 
-      codigo: 'oferta1-nombre', 
-      img: 'assets/img/helmet.png', 
-      precioAntes: 40000, 
-      precioAhora: 25000 
-    },
-    { 
-      codigo: 'oferta2-nombre', 
-      img: 'assets/img/armor.png', 
-      precioAntes: 50000, 
-      precioAhora: 45000 
-    },
-    { 
-      codigo: 'oferta3-nombre', 
-      img: 'assets/img/cofre.png', 
-      precioAntes: 145000, 
-      precioAhora: 115000 
-    }
-  ];
+  // --- Ahora las ofertas viven 100% en Firestore (ver botón de migración en /admin) ---
+  listaOfertas: any[] = [];
 
   constructor(
     private translationService: TranslationService,
-    private cartService: CartService
+    private cartService: CartService,
+    private firestore: Firestore
   ) {}
 
  ngOnInit(): void {
   this.translationService.idioma$.subscribe(idioma => {
     this.textos = this.translationService.obtenerTextos(idioma);
   });
+
+  // 🔥 Traer ofertas agregadas desde /admin y sumarlas a las fijas
+  const ofertasRef = collection(this.firestore, 'ofertas');
+  const ofertas$ = collectionData(ofertasRef, { idField: 'id' }) as Observable<any[]>;
+
+  ofertas$.subscribe(items => {
+    this.listaOfertas = [...this.listaOfertas, ...items];
+  });
 }
 
-  agregarAlCarrito(codigoNombre: string, img: string, precio: number) {
-    this.cartService.agregarItem(codigoNombre, img, precio);
-    const nombreTraducido = this.textos[codigoNombre] || codigoNombre;
+  obtenerNombre(oferta: any): string {
+    return oferta.nombre || this.textos[oferta.codigo] || '';
+  }
+
+  agregarAlCarrito(oferta: any) {
+    const nombre = this.obtenerNombre(oferta);
+    this.cartService.agregarItem(oferta.id || oferta.codigo, oferta.img, oferta.precioAhora);
     const accion = this.textos['noti-agregado'] || 'agregado al carrito';
-    this.mostrarNotificacion(`"${nombreTraducido}" ${accion}`);
+    this.mostrarNotificacion(`"${nombre}" ${accion}`);
   }
 
   mostrarNotificacion(mensaje: string) {
