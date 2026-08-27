@@ -341,3 +341,8 @@ app-root {
   min-height: 100vh;
   background: #0a0a0a;
 }
+
+/* Espacio para que la barra de navegación inferior no tape el contenido */
+body {
+  padding-bottom: 64px;
+}

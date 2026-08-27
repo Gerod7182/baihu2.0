@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Baihuart</string>
+    <string name="title_activity_main">Baihuart</string>
+    <string name="package_name">com.baihuart.app</string>
+    <string name="custom_url_scheme">com.baihuart.app</string>
+</resources>
