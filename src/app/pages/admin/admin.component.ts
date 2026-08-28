@@ -1,6 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Firestore, collection, collectionData, addDoc, doc, updateDoc, deleteDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { Firestore, collection, addDoc } from '@angular/fire/firestore';
+
+import { FirestoreCrudService } from '../../services/firestore-crud.service';
+import { Producto } from '../../models/producto.model';
+import { ItemGaleria } from '../../models/galeria-item.model';
+import { Oferta } from '../../models/oferta.model';
+
+type ConId<T> = T & { id: string };
 
 @Component({
   selector: 'app-admin',
@@ -12,59 +19,190 @@ export class AdminComponent implements OnInit {
   // =========================
   // 🛍️ PRODUCTOS
   // =========================
-
-  producto = {
-    nombre: '',
-    precio: 0,
-    img: '',
-    codigo: '',
-    categoria: 'camisetas'
-  };
-
+  producto: Producto = { nombre: '', precio: 0, img: '', codigo: '', categoria: 'camisetas' };
   mensaje = '';
-  productos$!: Observable<any[]>;
+  productos$!: Observable<ConId<Producto>[]>;
   productoEditandoId: string | null = null;
 
   // =========================
   // 🖼️ GALERÍA
   // =========================
-
-  itemGaleria = {
-    img: '',
-    categoria: 'espiritual',
-    titulo: '',
-    descripcion: ''
-  };
-
+  itemGaleria: ItemGaleria = { img: '', categoria: 'espiritual', titulo: '', descripcion: '' };
   mensajeGaleria = '';
-  galeria$!: Observable<any[]>;
+  galeria$!: Observable<ConId<ItemGaleria>[]>;
   itemGaleriaEditandoId: string | null = null;
 
   // =========================
   // 🔥 OFERTAS
   // =========================
-
-  oferta = {
-    nombre: '',
-    img: '',
-    precioAntes: 0,
-    precioAhora: 0
-  };
-
+  oferta: Oferta = { nombre: '', img: '', precioAntes: 0, precioAhora: 0 };
   mensajeOferta = '';
-  ofertas$!: Observable<any[]>;
+  ofertas$!: Observable<ConId<Oferta>[]>;
   ofertaEditandoId: string | null = null;
 
-  constructor(private firestore: Firestore) {}
+  constructor(
+    private crud: FirestoreCrudService<any>,
+    private firestore: Firestore // se mantiene solo para la migración puntual de abajo
+  ) {}
+
+  ngOnInit(): void {
+    this.productos$ = this.crud.obtenerTodos('productos');
+    this.galeria$ = this.crud.obtenerTodos('galeria');
+    this.ofertas$ = this.crud.obtenerTodos('ofertas');
+  }
 
   // =========================
-  // 🚚 MIGRACIÓN (una sola vez)
+  // 🛍️ CRUD Productos
+  // =========================
+
+  async guardarProducto() {
+    if (!this.producto.nombre || !this.producto.codigo) {
+      this.mensaje = 'Faltan datos obligatorios';
+      return;
+    }
+    if (!this.producto.img) {
+      this.mensaje = 'Sube una imagen antes de guardar';
+      return;
+    }
+    try {
+      await this.crud.guardar('productos', this.producto, this.productoEditandoId);
+      this.mensaje = this.productoEditandoId
+        ? '¡Producto actualizado! ✏️'
+        : '¡Producto guardado con éxito en la Nube! ☁️';
+      this.cancelarEdicionProducto();
+    } catch (error) {
+      console.error('Error guardando producto:', error);
+      this.mensaje = 'No se pudo guardar el producto. Intenta de nuevo.';
+    }
+  }
+
+  editarProducto(p: ConId<Producto>) {
+    this.producto = { nombre: p.nombre, precio: p.precio, img: p.img, codigo: p.codigo, categoria: p.categoria };
+    this.productoEditandoId = p.id;
+    this.mensaje = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  duplicarProducto(p: ConId<Producto>) {
+    this.producto = { nombre: p.nombre, precio: p.precio, img: p.img, codigo: p.codigo + '-copia', categoria: p.categoria };
+    this.productoEditandoId = null;
+    this.mensaje = 'Cambia la categoría/código y guarda para crear la copia.';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async eliminarProducto(id: string) {
+    if (!confirm('¿Seguro que quieres eliminar este producto? No se puede deshacer.')) return;
+    try {
+      await this.crud.eliminar('productos', id);
+      this.mensaje = 'Producto eliminado.';
+    } catch (error) {
+      console.error('Error eliminando producto:', error);
+      this.mensaje = 'No se pudo eliminar el producto.';
+    }
+  }
+
+  cancelarEdicionProducto() {
+    this.producto = { nombre: '', precio: 0, img: '', codigo: '', categoria: 'camisetas' };
+    this.productoEditandoId = null;
+  }
+
+  // =========================
+  // 🖼️ CRUD Galería
+  // =========================
+
+  async guardarItemGaleria() {
+    if (!this.itemGaleria.titulo || !this.itemGaleria.img) {
+      this.mensajeGaleria = 'Faltan datos obligatorios (título e imagen)';
+      return;
+    }
+    try {
+      await this.crud.guardar('galeria', this.itemGaleria, this.itemGaleriaEditandoId);
+      this.mensajeGaleria = this.itemGaleriaEditandoId
+        ? '¡Imagen de galería actualizada! ✏️'
+        : '¡Imagen agregada a la galería! 🖼️';
+      this.cancelarEdicionGaleria();
+    } catch (error) {
+      console.error('Error guardando item de galería:', error);
+      this.mensajeGaleria = 'No se pudo guardar la imagen.';
+    }
+  }
+
+  editarItemGaleria(item: ConId<ItemGaleria>) {
+    this.itemGaleria = { img: item.img, categoria: item.categoria, titulo: item.titulo, descripcion: item.descripcion };
+    this.itemGaleriaEditandoId = item.id;
+    this.mensajeGaleria = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async eliminarItemGaleria(id: string) {
+    if (!confirm('¿Seguro que quieres quitar esta imagen de la galería?')) return;
+    try {
+      await this.crud.eliminar('galeria', id);
+      this.mensajeGaleria = 'Imagen eliminada de la galería.';
+    } catch (error) {
+      console.error('Error eliminando item de galería:', error);
+      this.mensajeGaleria = 'No se pudo eliminar la imagen.';
+    }
+  }
+
+  cancelarEdicionGaleria() {
+    this.itemGaleria = { img: '', categoria: 'espiritual', titulo: '', descripcion: '' };
+    this.itemGaleriaEditandoId = null;
+  }
+
+  // =========================
+  // 🔥 CRUD Ofertas
+  // =========================
+
+  async guardarOferta() {
+    if (!this.oferta.nombre || !this.oferta.img) {
+      this.mensajeOferta = 'Faltan datos obligatorios (nombre e imagen)';
+      return;
+    }
+    try {
+      await this.crud.guardar('ofertas', this.oferta, this.ofertaEditandoId);
+      this.mensajeOferta = this.ofertaEditandoId
+        ? '¡Oferta actualizada! ✏️'
+        : '¡Oferta publicada! 🔥';
+      this.cancelarEdicionOferta();
+    } catch (error) {
+      console.error('Error guardando oferta:', error);
+      this.mensajeOferta = 'No se pudo guardar la oferta.';
+    }
+  }
+
+  editarOferta(o: ConId<Oferta>) {
+    this.oferta = { nombre: o.nombre, img: o.img, precioAntes: o.precioAntes, precioAhora: o.precioAhora };
+    this.ofertaEditandoId = o.id;
+    this.mensajeOferta = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async eliminarOferta(id: string) {
+    if (!confirm('¿Seguro que quieres quitar esta oferta?')) return;
+    try {
+      await this.crud.eliminar('ofertas', id);
+      this.mensajeOferta = 'Oferta eliminada.';
+    } catch (error) {
+      console.error('Error eliminando oferta:', error);
+      this.mensajeOferta = 'No se pudo eliminar la oferta.';
+    }
+  }
+
+  cancelarEdicionOferta() {
+    this.oferta = { nombre: '', img: '', precioAntes: 0, precioAhora: 0 };
+    this.ofertaEditandoId = null;
+  }
+
+  // =========================
+  // 🚚 MIGRACIÓN (una sola vez — borrar este bloque completo
+  // una vez confirmes que ya no la necesitas correr de nuevo)
   // =========================
 
   migrando = false;
   mensajeMigracion = '';
 
-  private productosOriginales = [
+  private productosOriginales: Producto[] = [
     { nombre: 'Camiseta VI Brawler', img: 'assets/img/1.jpg', precio: 50000, codigo: 'prod-cam-vi', categoria: 'camisetas' },
     { nombre: 'Camiseta Tigre Blanco', img: 'assets/img/2.jpg', precio: 50000, codigo: 'prod-cam-tigre', categoria: 'camisetas' },
     { nombre: 'Camiseta Dragón Azul', img: 'assets/img/3.jpg', precio: 50000, codigo: 'prod-cam-dragon', categoria: 'camisetas' },
@@ -84,7 +222,7 @@ export class AdminComponent implements OnInit {
     { nombre: 'Póster Fénix Rojo', img: 'assets/img/fenghua.png', precio: 20000, codigo: 'prod-post-fenix', categoria: 'posters' }
   ];
 
-  private galeriaOriginal = [
+  private galeriaOriginal: ItemGaleria[] = [
     { titulo: 'Tigre Blanco (Bái Hǔ)', descripcion: 'Como una de las Cuatro Bestias Sagradas, personifica la fuerza, el coraje y la justicia.', img: 'assets/img/BAIHU.png', categoria: 'espiritual' },
     { titulo: 'Serpiente Amarilla', descripcion: 'En la posición central del Feng Shui, encarna la estabilidad y el equilibrio del elemento tierra.', img: 'assets/img/HEBI.png', categoria: 'espiritual' },
     { titulo: 'Fénix Vermellón', descripcion: 'Irradia calor, luz y renovación como bestia sagrada del sur.', img: 'assets/img/fenghua.png', categoria: 'espiritual' },
@@ -99,7 +237,7 @@ export class AdminComponent implements OnInit {
     { titulo: 'Cheetara', descripcion: 'Heroína de los Thundercats con velocidad sobrenatural.', img: 'assets/img/cheetara.png', categoria: 'pop' }
   ];
 
-  private ofertasOriginales = [
+  private ofertasOriginales: Oferta[] = [
     { nombre: 'Pack: Camiseta + Sticker', img: 'assets/img/helmet.png', precioAntes: 40000, precioAhora: 25000 },
     { nombre: 'Pack: Poster + Pack de Stickers', img: 'assets/img/armor.png', precioAntes: 50000, precioAhora: 45000 },
     { nombre: 'Pack: Hoodie + Poster + Sticker', img: 'assets/img/cofre.png', precioAntes: 145000, precioAhora: 115000 }
@@ -135,205 +273,10 @@ export class AdminComponent implements OnInit {
 
       this.mensajeMigracion = '¡Listo! Se migraron todos los diseños originales. Ya puedes editarlos/eliminarlos abajo.';
     } catch (error) {
-      console.error(error);
-      this.mensajeMigracion = 'Error durante la migración: ' + error;
+      console.error('Error durante la migración:', error);
+      this.mensajeMigracion = 'Hubo un error durante la migración. Revisa la consola para más detalles.';
     }
 
     this.migrando = false;
-  }
-
-  ngOnInit(): void {
-    const productosRef = collection(this.firestore, 'productos');
-    this.productos$ = collectionData(productosRef, { idField: 'id' }) as Observable<any[]>;
-
-    const galeriaRef = collection(this.firestore, 'galeria');
-    this.galeria$ = collectionData(galeriaRef, { idField: 'id' }) as Observable<any[]>;
-
-    const ofertasRef = collection(this.firestore, 'ofertas');
-    this.ofertas$ = collectionData(ofertasRef, { idField: 'id' }) as Observable<any[]>;
-  }
-
-
-  // =========================
-  // 🛍️ CRUD Productos
-  // =========================
-
-  async guardarProducto() {
-    if (!this.producto.nombre || !this.producto.codigo) {
-      this.mensaje = 'Faltan datos obligatorios';
-      return;
-    }
-    if (!this.producto.img) {
-      this.mensaje = 'Sube una imagen antes de guardar';
-      return;
-    }
-
-    try {
-      if (this.productoEditandoId) {
-        const refDoc = doc(this.firestore, 'productos', this.productoEditandoId);
-        await updateDoc(refDoc, this.producto);
-        this.mensaje = '¡Producto actualizado! ✏️';
-      } else {
-        const coleccionRef = collection(this.firestore, 'productos');
-        await addDoc(coleccionRef, this.producto);
-        this.mensaje = '¡Producto guardado con éxito en la Nube! ☁️';
-      }
-      this.cancelarEdicionProducto();
-    } catch (error) {
-      console.error(error);
-      this.mensaje = 'Error al guardar: ' + error;
-    }
-  }
-
-  editarProducto(p: any) {
-    this.producto = {
-      nombre: p.nombre,
-      precio: p.precio,
-      img: p.img,
-      codigo: p.codigo,
-      categoria: p.categoria
-    };
-    this.productoEditandoId = p.id;
-    this.mensaje = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  duplicarProducto(p: any) {
-    this.producto = {
-      nombre: p.nombre,
-      precio: p.precio,
-      img: p.img,
-      codigo: p.codigo + '-copia',
-      categoria: p.categoria
-    };
-    this.productoEditandoId = null;
-    this.mensaje = 'Cambia la categoría/código y guarda para crear la copia.';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  async eliminarProducto(id: string) {
-    if (!confirm('¿Seguro que quieres eliminar este producto? No se puede deshacer.')) return;
-    try {
-      await deleteDoc(doc(this.firestore, 'productos', id));
-      this.mensaje = 'Producto eliminado.';
-    } catch (error) {
-      console.error(error);
-      this.mensaje = 'Error al eliminar: ' + error;
-    }
-  }
-
-  cancelarEdicionProducto() {
-    this.producto = { nombre: '', precio: 0, img: '', codigo: '', categoria: 'camisetas' };
-    this.productoEditandoId = null;
-  }
-
-  // =========================
-  // 🖼️ CRUD Galería
-  // =========================
-
-  async guardarItemGaleria() {
-    if (!this.itemGaleria.titulo || !this.itemGaleria.img) {
-      this.mensajeGaleria = 'Faltan datos obligatorios (título e imagen)';
-      return;
-    }
-
-    try {
-      if (this.itemGaleriaEditandoId) {
-        const refDoc = doc(this.firestore, 'galeria', this.itemGaleriaEditandoId);
-        await updateDoc(refDoc, this.itemGaleria);
-        this.mensajeGaleria = '¡Imagen de galería actualizada! ✏️';
-      } else {
-        const coleccionRef = collection(this.firestore, 'galeria');
-        await addDoc(coleccionRef, this.itemGaleria);
-        this.mensajeGaleria = '¡Imagen agregada a la galería! 🖼️';
-      }
-      this.cancelarEdicionGaleria();
-    } catch (error) {
-      console.error(error);
-      this.mensajeGaleria = 'Error al guardar: ' + error;
-    }
-  }
-
-  editarItemGaleria(item: any) {
-    this.itemGaleria = {
-      img: item.img,
-      categoria: item.categoria,
-      titulo: item.titulo,
-      descripcion: item.descripcion
-    };
-    this.itemGaleriaEditandoId = item.id;
-    this.mensajeGaleria = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  async eliminarItemGaleria(id: string) {
-    if (!confirm('¿Seguro que quieres quitar esta imagen de la galería?')) return;
-    try {
-      await deleteDoc(doc(this.firestore, 'galeria', id));
-      this.mensajeGaleria = 'Imagen eliminada de la galería.';
-    } catch (error) {
-      console.error(error);
-      this.mensajeGaleria = 'Error al eliminar: ' + error;
-    }
-  }
-
-  cancelarEdicionGaleria() {
-    this.itemGaleria = { img: '', categoria: 'espiritual', titulo: '', descripcion: '' };
-    this.itemGaleriaEditandoId = null;
-  }
-
-  // =========================
-  // 🔥 CRUD Ofertas
-  // =========================
-
-  async guardarOferta() {
-    if (!this.oferta.nombre || !this.oferta.img) {
-      this.mensajeOferta = 'Faltan datos obligatorios (nombre e imagen)';
-      return;
-    }
-
-    try {
-      if (this.ofertaEditandoId) {
-        const refDoc = doc(this.firestore, 'ofertas', this.ofertaEditandoId);
-        await updateDoc(refDoc, this.oferta);
-        this.mensajeOferta = '¡Oferta actualizada! ✏️';
-      } else {
-        const coleccionRef = collection(this.firestore, 'ofertas');
-        await addDoc(coleccionRef, this.oferta);
-        this.mensajeOferta = '¡Oferta publicada! 🔥';
-      }
-      this.cancelarEdicionOferta();
-    } catch (error) {
-      console.error(error);
-      this.mensajeOferta = 'Error al guardar: ' + error;
-    }
-  }
-
-  editarOferta(o: any) {
-    this.oferta = {
-      nombre: o.nombre,
-      img: o.img,
-      precioAntes: o.precioAntes,
-      precioAhora: o.precioAhora
-    };
-    this.ofertaEditandoId = o.id;
-    this.mensajeOferta = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  async eliminarOferta(id: string) {
-    if (!confirm('¿Seguro que quieres quitar esta oferta?')) return;
-    try {
-      await deleteDoc(doc(this.firestore, 'ofertas', id));
-      this.mensajeOferta = 'Oferta eliminada.';
-    } catch (error) {
-      console.error(error);
-      this.mensajeOferta = 'Error al eliminar: ' + error;
-    }
-  }
-
-  cancelarEdicionOferta() {
-    this.oferta = { nombre: '', img: '', precioAntes: 0, precioAhora: 0 };
-    this.ofertaEditandoId = null;
   }
 }
