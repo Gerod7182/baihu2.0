@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { CarritoComponent } from './carrito.component';
 
@@ -8,7 +9,8 @@ describe('CarritoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CarritoComponent ]
+      declarations: [ CarritoComponent ],
+      imports: [ RouterTestingModule ] // provee un Router falso, sin necesitar rutas reales
     })
     .compileComponents();
   });
