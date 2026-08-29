@@ -1,0 +1,32 @@
+name: CI - Tests de baihuart
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_OPTIONS: --openssl-legacy-provider
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Correr tests unitarios (Karma + Jasmine, headless)
+        run: npx ng test --browsers=ChromeHeadlessCI --watch=false --code-coverage
+
+      - name: Verificar que el proyecto compile (ng build)
+        run: npx ng build
