@@ -11,7 +11,7 @@ describe('OfertasComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ OfertasComponent ],
       providers: [
-        { provide: Firestore, useValue: {} } // Firestore falso, no nos conectamos de verdad en el test
+        { provide: Firestore, useValue: {} }
       ]
     })
     .compileComponents();
@@ -20,7 +20,13 @@ describe('OfertasComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(OfertasComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    // OJO: a proposito NO llamamos fixture.detectChanges() aqui.
+    // detectChanges() dispara ngOnInit(), y ngOnInit() de OfertasComponent
+    // llama a collection()/collectionData() de Firestore de verdad, lo
+    // cual necesita una app de Firebase real inicializada (no solo un
+    // objeto Firestore falso). Como esta prueba solo verifica que el
+    // componente se pueda CREAR (no probar su logica de Firestore),
+    // evitamos disparar ese código.
   });
 
   it('should create', () => {
