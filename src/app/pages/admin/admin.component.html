@@ -54,10 +54,15 @@
       </select>
     </div>
 
-    <div class="field">
+        <div class="field">
       <label>Imagen</label>
-      <input type="text" [(ngModel)]="producto.img" placeholder="https://...">
+      <input #fProd type="file" accept="image/*" hidden (change)="subirFoto($event, 'producto')">
+      <button type="button" class="btn-ghost" (click)="fProd.click()" [disabled]="subiendo">
+        {{ subiendo ? 'Subiendo...' : 'Elegir foto' }}
+      </button>
+      <input type="text" [(ngModel)]="producto.img" placeholder="o pega una URL https://...">
       <img *ngIf="producto.img" [src]="producto.img" class="upload-preview">
+      <p *ngIf="errorSubida" class="form-message">{{ errorSubida }}</p>
     </div>
 
     <button (click)="guardarProducto()" class="btn-ink">
@@ -117,11 +122,17 @@
       </select>
     </div>
 
-    <div class="field">
+       <div class="field">
       <label>Imagen</label>
-      <input type="text" [(ngModel)]="itemGaleria.img" placeholder="https://...">
+      <input #fGal type="file" accept="image/*" hidden (change)="subirFoto($event, 'galeria')">
+      <button type="button" class="btn-ghost" (click)="fGal.click()" [disabled]="subiendo">
+        {{ subiendo ? 'Subiendo...' : 'Elegir foto' }}
+      </button>
+      <input type="text" [(ngModel)]="itemGaleria.img" placeholder="o pega una URL https://...">
       <img *ngIf="itemGaleria.img" [src]="itemGaleria.img" class="upload-preview">
+      <p *ngIf="errorSubida" class="form-message">{{ errorSubida }}</p>
     </div>
+
 
     <button (click)="guardarItemGaleria()" class="btn-ink">
       {{ itemGaleriaEditandoId ? 'Actualizar imagen' : 'Agregar a la galería' }}
@@ -175,11 +186,17 @@
       <input [(ngModel)]="oferta.precioAhora" type="number">
     </div>
 
-    <div class="field">
+        <div class="field">
       <label>Imagen</label>
-      <input type="text" [(ngModel)]="oferta.img" placeholder="https://...">
+      <input #fOf type="file" accept="image/*" hidden (change)="subirFoto($event, 'oferta')">
+      <button type="button" class="btn-ghost" (click)="fOf.click()" [disabled]="subiendo">
+        {{ subiendo ? 'Subiendo...' : 'Elegir foto' }}
+      </button>
+      <input type="text" [(ngModel)]="oferta.img" placeholder="o pega una URL https://...">
       <img *ngIf="oferta.img" [src]="oferta.img" class="upload-preview">
+      <p *ngIf="errorSubida" class="form-message">{{ errorSubida }}</p>
     </div>
+
 
     <button (click)="guardarOferta()" class="btn-ink">
       {{ ofertaEditandoId ? 'Actualizar oferta' : 'Publicar oferta' }}

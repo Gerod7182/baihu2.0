@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Firestore, collection, addDoc } from '@angular/fire/firestore';
-
+import { CloudinaryService } from '../../services/cloudinary.service';
 import { FirestoreCrudService } from '../../services/firestore-crud.service';
 import { Producto } from '../../models/producto.model';
 import { ItemGaleria } from '../../models/galeria-item.model';
@@ -40,10 +40,39 @@ export class AdminComponent implements OnInit {
   ofertas$!: Observable<ConId<Oferta>[]>;
   ofertaEditandoId: string | null = null;
 
-  constructor(
+    constructor(
     private crud: FirestoreCrudService<any>,
-    private firestore: Firestore // se mantiene solo para la migración puntual de abajo
+    private firestore: Firestore, // se mantiene solo para la migración puntual de abajo
+    private readonly cloudinary: CloudinaryService
   ) {}
+
+  // =========================
+  // 📷 SUBIDA DE IMÁGENES
+  // =========================
+  subiendo = false;
+  errorSubida = '';
+
+  async subirFoto(evento: Event, destino: 'producto' | 'galeria' | 'oferta') {
+    const input = evento.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    if (!archivo) return;
+
+    this.errorSubida = '';
+    this.subiendo = true;
+
+    try {
+      const url = await this.cloudinary.subirImagen(archivo);
+      if (destino === 'producto') this.producto.img = url;
+      else if (destino === 'galeria') this.itemGaleria.img = url;
+      else this.oferta.img = url;
+    } catch (error) {
+      console.error('Error subiendo imagen:', error);
+      this.errorSubida = error instanceof Error ? error.message : 'No se pudo subir la imagen.';
+    } finally {
+      this.subiendo = false;
+      input.value = ''; // permite elegir la misma foto otra vez
+    }
+  }
 
   ngOnInit(): void {
     this.productos$ = this.crud.obtenerTodos('productos');

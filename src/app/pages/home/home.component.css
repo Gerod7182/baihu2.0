@@ -239,7 +239,7 @@
 ========================= */
 .qr-floating {
   position: fixed;
-  bottom: 20px;
+    bottom: calc(80px + env(safe-area-inset-bottom));
   right: 20px;
   z-index: 999;
 
@@ -296,7 +296,7 @@
 @media (max-width: 768px) {
 
   .qr-floating {
-    bottom: 15px;
+      bottom: calc(76px + env(safe-area-inset-bottom));
     right: 15px;
     padding: 10px;
   }
