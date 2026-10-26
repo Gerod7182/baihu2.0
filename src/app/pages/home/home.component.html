@@ -41,7 +41,7 @@
 
       <button 
         class="btn-tienda"
-        (click)="agregarAlCarrito(producto.id, producto.img, producto.precio)">
+        (click)="agregarAlCarrito(producto.id, producto.img, producto.precio, producto.nombre || '')">
 
         {{ textos['btn-agregar'] }}
 
@@ -80,7 +80,8 @@
 
       <button
         class="btn-tienda"
-        (click)="agregarAlCarrito(item.id, item.img, item.precio)">
+        (click)="agregarAlCarrito(item.id, item.img, item.precio, item.nombre || '')">
+
 
         {{ textos['btn-agregar'] }}
 
@@ -119,8 +120,7 @@
 
       <button
         class="btn-tienda"
-        (click)="agregarAlCarrito(item.id, item.img, item.precio)">
-
+        (click)="agregarAlCarrito(item.id, item.img, item.precio, item.nombre || '')">
         {{ textos['btn-agregar'] }}
 
       </button>

@@ -7,10 +7,10 @@ import { Product } from '../models/product.model';
 })
 export class CartService {
 
-  private cartCountSubject = new BehaviorSubject<number>(0);
+  private readonly cartCountSubject = new BehaviorSubject<number>(0);
   cartCount$ = this.cartCountSubject.asObservable();
 
-  private cartUpdatedSubject = new BehaviorSubject<void>(undefined);
+  private readonly cartUpdatedSubject = new BehaviorSubject<void>(undefined);
   cartUpdated$ = this.cartUpdatedSubject.asObservable();
 
   constructor() {
@@ -27,21 +27,35 @@ export class CartService {
 
   actualizarContador() {
     const carrito = this.getCarrito();
-const total = carrito.reduce((acc, item) => acc + (item.cantidad ?? 0), 0);    this.cartCountSubject.next(total);
+    const total = carrito.reduce((acc, item) => acc + (item.cantidad ?? 0), 0);
+    this.cartCountSubject.next(total);
   }
 
-  agregarItem(id: string, img: string, precio: number) {
-    let carrito = this.getCarrito();
+    agregarItem(id: string, img: string, precio: number, nombre?: string) {
+    const carrito = this.getCarrito();
 
     const existente = carrito.find(item => item.id === id);
 
     if (existente) {
       existente.cantidad = (existente.cantidad ?? 0) + 1;
     } else {
-      carrito.push({ id, img, precio, cantidad: 1 });
+      carrito.push({ id, img, precio, nombre, cantidad: 1 });
     }
 
     this.setCarrito(carrito);
+    this.actualizarContador();
+    this.cartUpdatedSubject.next();
+  }
+
+  // Suma o resta unidades; si la cantidad llega a 0 el producto se quita
+  cambiarCantidad(id: string, delta: number) {
+    const carrito = this.getCarrito();
+    const item = carrito.find(i => i.id === id);
+    if (!item) return;
+
+    item.cantidad = (item.cantidad ?? 0) + delta;
+
+    this.setCarrito(carrito.filter(i => (i.cantidad ?? 0) > 0));
     this.actualizarContador();
     this.cartUpdatedSubject.next();
   }

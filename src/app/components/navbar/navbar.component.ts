@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { TranslationService } from '../../services/translation.service';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
+import { SearchService } from '../../services/search.service';
 
-// ⚠️ Debe coincidir con el mismo correo que pusiste en admin.guard.ts
+//  mismo correo de admin.guard.ts
 const ADMIN_EMAIL = 'g3rm4n7115@gmail.com';
 
 @Component({
@@ -30,7 +31,8 @@ export class NavbarComponent implements OnInit {
   constructor(
     private translationService: TranslationService,
     private cartService: CartService,
-    private authService: AuthService
+    private authService: AuthService,
+    private searchService: SearchService
   ) {}
 
   ngOnInit(): void {
@@ -82,5 +84,12 @@ export class NavbarComponent implements OnInit {
     this.authService.logout().then(() => {
       window.location.reload();
     });
+  }
+
+  // 🔍 Cada vez que el usuario escribe en el buscador del navbar,
+  // esto avisa a home.component.ts (a través de SearchService)
+  // para que filtre el catálogo.
+  buscar(termino: string): void {
+    this.searchService.actualizarBusqueda(termino);
   }
 }

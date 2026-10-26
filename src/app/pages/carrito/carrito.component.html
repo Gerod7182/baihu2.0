@@ -1,101 +1,87 @@
-<section class="gallery-section carrito-page" style="min-height: 60vh; padding-top: 4rem;">
-  
-  <!-- 🔥 TÍTULO -->
-  <h2 style="font-family: 'Orbitron', sans-serif; color: #ff3223;">
-    {{ textos['carrito-titulo'] }}
-  </h2>
+<section class="ci-pagina">
+  <div class="ci-columna">
 
-  <!-- =========================
-       CARRITO VACÍO 🔥
-  ========================= -->
-  <div *ngIf="carrito.length === 0" class="carrito-vacio-container">
-
-    <!-- PORTAL -->
-    <div class="portal"></div>
-
-    <!-- PARTÍCULAS -->
-    <div class="particles">
-      <span *ngFor="let p of [].constructor(20)"></span>
+    <div class="ci-cabecera">
+      <h2 class="ci-titulo">{{ textos['carrito-titulo'] || 'Mi carrito' }}</h2>
+      <button type="button" class="ci-vaciar" *ngIf="carrito.length > 0" (click)="vaciarCarrito()">
+        <i class="fas fa-trash"></i> {{ textos['btn-vaciar'] || 'Vaciar carrito' }}
+      </button>
     </div>
 
-    <!-- ILUSTRACIÓN -->
-    <img src="assets/img/empty-comic.png" class="empty-art" alt="empty">
+    <!-- CARRITO VACÍO -->
+    <div *ngIf="carrito.length === 0" class="vacio-app">
 
-    <!-- TEXTO GLITCH -->
-    <h3 class="glitch-text" data-text="¿Tan vacío? 👻">
-      ¿Tan vacío? 👻
-    </h3>
-
-    <p>{{ textos['carrito-vacio-sub'] }}</p>
-
-    <a routerLink="/" class="hero-btn btn-explorar">
-      {{ textos['btn-explorar'] }}
-    </a>
-
-  </div>
-
-  <!-- =========================
-       ITEMS DEL CARRITO 🔥
-  ========================= -->
-  <div class="gallery-grid" *ngIf="carrito.length > 0">
-
-    <div class="gallery-item" 
-         *ngFor="let item of carrito"
-         style="background: #222; padding: 1rem; border-radius: 8px;">
-
-      <img [src]="item.img" 
-           [alt]="item.nombre"
-           style="width: 100%; border-radius: 8px; margin-bottom: 1rem;">
-
-      <div style="text-align: left; color: white;">
-        
-        <h3 style="color: #ff3223; font-size: 1.1rem;">
-          {{ textos[item.nombre] }}
-        </h3>
-        
-        <p>{{ textos['lbl-precio'] }}: ${{ item.precio }}</p>
-        <p>{{ textos['lbl-cantidad'] }}: {{ item.cantidad }}</p>
-
-        <p style="font-weight: bold; margin-top: 5px;">
-          {{ textos['lbl-subtotal'] }}: ${{ item.precio * item.cantidad }}
-        </p>
-      
+      <div class="vacio-circulo">
+        <i class="fas fa-shopping-cart"></i>
       </div>
 
-      <button 
-        (click)="eliminarItem(item.id)" 
-        class="hero-btn"
-        style="background: #8a0606; margin-top: 1rem; font-size: 0.8rem; width: 100%;">
-        
-        {{ textos['btn-eliminar'] }}
-      
-      </button>
+      <h3 class="vacio-titulo">
+        {{ textos['carrito-vacio-titulo'] || 'Tu carrito está vacío' }}
+      </h3>
+
+      <p class="vacio-mensaje">
+        {{ textos['carrito-vacio-sub'] || 'Aún no has elegido ninguna pieza. Explora las camisetas, stickers y pósters de baihuart y llévate arte que cobra vida.' }}
+      </p>
+
+      <a routerLink="/" class="hero-btn btn-explorar vacio-boton">
+        {{ textos['btn-explorar'] || 'Explorar la tienda' }}
+      </a>
 
     </div>
 
+    <!-- PRODUCTOS -->
+    <div class="ci-lista" *ngIf="carrito.length > 0">
+
+      <article class="ci-item" *ngFor="let item of carrito; trackBy: trackItem">
+
+        <img class="ci-img" [src]="item.img" [alt]="nombreDe(item)">
+
+        <div class="ci-centro">
+          <div class="ci-nombre">{{ nombreDe(item) }}</div>
+          <div class="ci-unitario">${{ precio(item.precio) }} c/u</div>
+
+          <div class="ci-selector">
+            <button type="button" class="ci-cant-btn" aria-label="Quitar una unidad"
+                    (click)="cambiarCantidad(item.id, -1)">
+              <i class="fas fa-minus"></i>
+            </button>
+            <span class="ci-cantidad">{{ item.cantidad }}</span>
+            <button type="button" class="ci-cant-btn" aria-label="Agregar una unidad"
+                    (click)="cambiarCantidad(item.id, 1)">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="ci-derecha">
+          <button type="button" class="ci-eliminar" aria-label="Eliminar del carrito"
+                  (click)="eliminarItem(item.id)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+          <span class="ci-subtotal">${{ precio(item.precio * item.cantidad) }}</span>
+        </div>
+
+      </article>
+
+    </div>
   </div>
 
-  <!-- =========================
-       RESUMEN + BOTONES 🔥
-  ========================= -->
-  <div *ngIf="carrito.length > 0" class="resumen-carrito">
+  <!-- BARRA FIJA CON EL TOTAL -->
+  <div class="ci-barra" *ngIf="carrito.length > 0">
+    <div class="ci-barra-int">
+      <p class="ci-error" *ngIf="mensajeError">{{ mensajeError }}</p>
 
-    <h3 class="total">
-      {{ textos['txt-total'] }}: ${{ total }}
-    </h3>
+      <div class="ci-barra-fila">
+        <div>
+          <div class="ci-etq">Total · {{ unidades }} {{ unidades === 1 ? 'artículo' : 'artículos' }}</div>
+          <div class="ci-total">${{ precio(total) }}</div>
+        </div>
 
-    <div class="acciones-carrito">
-
-      <button (click)="finalizarCompra()" class="hero-btn btn-comprar">
-        {{ textos['btn-comprar'] || 'Finalizar compra' }}
-      </button>
-
-      <button (click)="vaciarCarrito()" class="hero-btn btn-vaciar">
-        {{ textos['btn-vaciar'] }}
-      </button>
-
+        <button type="button" class="hero-btn ci-comprar" (click)="finalizarCompra()" [disabled]="procesandoCompra">
+          {{ procesandoCompra ? 'Procesando...' : (textos['btn-comprar'] || 'Finalizar compra') }}
+        </button>
+      </div>
     </div>
-
   </div>
 
 </section>

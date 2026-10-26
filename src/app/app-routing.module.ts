@@ -6,7 +6,8 @@ import { OfertasComponent } from './pages/ofertas/ofertas.component';
 import { CarritoComponent } from './pages/carrito/carrito.component';
 import { LoginComponent } from './pages/login/login.component';
 import { AdminComponent } from './pages/admin/admin.component';
-import { GraciasComponent } from './pages/gracias/gracias.component'; // 🔥 FALTABA
+import { GraciasComponent } from './pages/gracias/gracias.component';
+import { CuentaComponent } from './pages/cuenta/cuenta.component';
 import { AdminGuard } from './guards/admin.guard';
 
 const routes: Routes = [
@@ -15,8 +16,9 @@ const routes: Routes = [
   { path: 'ofertas', component: OfertasComponent },
   { path: 'carrito', component: CarritoComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'cuenta', component: CuentaComponent },
 
-  { path: 'gracias', component: GraciasComponent }, // 🔥 ESTA ES LA CLAVE
+  { path: 'gracias', component: GraciasComponent },
 
   { path: 'admin', component: AdminComponent, canActivate: [AdminGuard] },
 

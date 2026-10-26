@@ -68,25 +68,9 @@
     <span>Cuenta</span>
   </a>
 
-  <div *ngIf="usuarioLogueado" (click)="toggleUserMenu()" class="tab-item" [class.tab-active]="menuUsuarioAbierto">
+  <a *ngIf="usuarioLogueado" routerLink="/cuenta" routerLinkActive="tab-active" class="tab-item">
     <i class="fas" [ngClass]="iconoUsuario"></i>
     <span>Cuenta</span>
-  </div>
-
-</nav>
-
-<!-- Menú de usuario, ahora anclado sobre la barra inferior -->
-<div *ngIf="usuarioLogueado && menuUsuarioAbierto" class="user-menu-popup">
-  <div class="user-menu-header">
-    <div class="user-menu-name">{{ nombreUsuario }}</div>
-    <div class="user-menu-email">{{ correoUsuario }}</div>
-  </div>
-
-  <a *ngIf="esAdmin" routerLink="/admin" (click)="menuUsuarioAbierto = false" class="user-menu-link admin-link">
-    <i class="fas fa-lock"></i> Panel Admin
   </a>
 
-  <div (click)="cerrarSesion()" class="user-menu-link">
-    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-  </div>
-</div>
+</nav>

@@ -32,7 +32,6 @@ export class GaleriaComponent implements OnInit {
       this.textos = this.translationService.obtenerTextos(idioma);
     });
 
-    // 🔥 Traer imágenes agregadas desde /admin y sumarlas a las fijas
     const galeriaRef = collection(this.firestore, 'galeria');
     const galeria$ = collectionData(galeriaRef, { idField: 'id' }) as Observable<any[]>;
 

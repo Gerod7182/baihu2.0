@@ -10,6 +10,7 @@ import { OfertasComponent } from './pages/ofertas/ofertas.component';
 import { CarritoComponent } from './pages/carrito/carrito.component';
 import { LoginComponent } from './pages/login/login.component';
 import { AdminComponent } from './pages/admin/admin.component';
+import { CuentaComponent } from './pages/cuenta/cuenta.component';
 
 import { environment } from '../environments/environment';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
@@ -17,7 +18,7 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 
 @NgModule({
-  declarations: [
+    declarations: [
     AppComponent,
     NavbarComponent,
     HomeComponent,
@@ -25,7 +26,8 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
     OfertasComponent,
     CarritoComponent,
     LoginComponent,
-    AdminComponent
+    AdminComponent,
+    CuentaComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,139 @@
+<section class="cu-pagina" *ngIf="usuario">
+  <div class="cu-columna">
+
+    <!-- ENCABEZADO DE PERFIL -->
+    <div class="cu-perfil">
+      <div class="cu-avatar">
+        <i *ngIf="iconoAvatar" class="fas" [ngClass]="iconoAvatar"></i>
+        <span *ngIf="!iconoAvatar">{{ inicial }}</span>
+      </div>
+
+      <div class="cu-datos">
+        <span class="cu-saludo">Hola,</span>
+        <h2 class="cu-nombre">{{ nombre }}</h2>
+        <span class="cu-correo">{{ usuario.email }}</span>
+        <div class="cu-fila">
+          <span class="cu-badge" *ngIf="esAdmin">Administrador</span>
+          <span class="cu-miembro" *ngIf="miembroDesde">Miembro desde {{ miembroDesde }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AVISO: CORREO SIN VERIFICAR -->
+    <div class="cu-aviso" *ngIf="!usuario.emailVerified">
+      <i class="fas fa-envelope"></i>
+      <span>Tu correo aún no está verificado.</span>
+      <button type="button" (click)="reenviarVerificacion()" [disabled]="reenviando">
+        {{ reenviando ? 'Enviando...' : 'Reenviar correo' }}
+      </button>
+    </div>
+    <p class="cu-info" *ngIf="avisoVerificacion">{{ avisoVerificacion }}</p>
+
+    <!-- MIS PEDIDOS -->
+    <h3 class="cu-subtitulo">Mis pedidos</h3>
+
+    <div class="cu-filtros">
+      <button type="button"
+              *ngFor="let op of opciones"
+              class="cu-filtro"
+              [class.activo]="filtro === op.clave"
+              [ngStyle]="filtro === op.clave ? { 'border-color': op.color } : null"
+              (click)="cambiarFiltro(op.clave)">
+        <i class="fas" [ngClass]="op.icono" [style.color]="op.color"></i>
+        <strong>{{ conteos[op.clave] }}</strong>
+        <small>{{ op.etiqueta }}</small>
+      </button>
+    </div>
+
+    <p class="cu-error" *ngIf="errorCarga">{{ errorCarga }}</p>
+    <p class="cu-error" *ngIf="errorAccion">{{ errorAccion }}</p>
+
+    <p class="cu-cargando" *ngIf="cargando">Cargando tus pedidos...</p>
+
+    <div class="cu-vacio" *ngIf="!cargando && !errorCarga && pedidosFiltrados.length === 0">
+      <i class="fas fa-shopping-bag"></i>
+      <p>{{ mensajeVacio }}</p>
+      <a routerLink="/" class="hero-btn cu-boton-vacio" *ngIf="filtro === 'todos'">Explorar la tienda</a>
+    </div>
+
+    <div class="cu-lista">
+      <article class="cu-pedido" *ngFor="let p of pedidosFiltrados; trackBy: trackPedido">
+
+        <div class="cu-pedido-cab">
+          <div>
+            <div class="cu-pedido-num">Pedido #{{ numero(p) }}</div>
+            <div class="cu-pedido-fecha">{{ fecha(p) }}</div>
+          </div>
+          <span class="cu-estado" [ngClass]="'estado-' + p.estado">{{ p.estado }}</span>
+        </div>
+
+        <div class="cu-miniaturas">
+          <div class="cu-mini" *ngFor="let item of p.items | slice:0:4">
+            <img [src]="item.img" [alt]="item.nombre">
+            <span class="cu-mini-cant" *ngIf="item.cantidad > 1">×{{ item.cantidad }}</span>
+          </div>
+          <span class="cu-mas" *ngIf="p.items.length > 4">+{{ p.items.length - 4 }}</span>
+        </div>
+
+        <p class="cu-detalle">{{ detalle(p) }}</p>
+
+        <div class="cu-pedido-pie">
+          <div>
+            <div class="cu-unidades">{{ unidades(p) }} {{ unidades(p) === 1 ? 'artículo' : 'artículos' }}</div>
+            <div class="cu-total">${{ precio(p.total) }}</div>
+          </div>
+
+          <button type="button" class="cu-btn-borde" *ngIf="p.estado === 'pendiente'"
+                  (click)="pedirAccion('cancelar', p.id)">Cancelar pedido</button>
+          <button type="button" class="cu-btn-borde" *ngIf="p.estado === 'cancelado'"
+                  (click)="pedirAccion('eliminar', p.id)">Eliminar</button>
+        </div>
+
+      </article>
+    </div>
+
+    <!-- MENÚ MI CUENTA -->
+    <div class="cu-menu">
+      <div class="cu-menu-titulo">Mi cuenta</div>
+
+      <a class="cu-fila-menu" routerLink="/admin" *ngIf="esAdmin">
+        <span class="cu-icono"><i class="fas fa-lock"></i></span>
+        <span class="cu-textos">
+          <strong>Panel de administración</strong>
+          <small>Productos, galería y ofertas</small>
+        </span>
+        <i class="fas fa-chevron-right cu-flecha"></i>
+      </a>
+
+      <a class="cu-fila-menu" routerLink="/">
+        <span class="cu-icono"><i class="fas fa-store"></i></span>
+        <span class="cu-textos">
+          <strong>Seguir comprando</strong>
+          <small>Explora camisetas, stickers y pósters</small>
+        </span>
+        <i class="fas fa-chevron-right cu-flecha"></i>
+      </a>
+
+      <button type="button" class="cu-fila-menu peligro" (click)="pedirAccion('salir')">
+        <span class="cu-icono"><i class="fas fa-sign-out-alt"></i></span>
+        <span class="cu-textos"><strong>Cerrar sesión</strong></span>
+        <i class="fas fa-chevron-right cu-flecha"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- MODAL DE CONFIRMACIÓN -->
+  <div class="cu-modal-fondo" *ngIf="accion" (click)="cerrarAccion()">
+    <div class="cu-modal" (click)="$event.stopPropagation()">
+      <h4>{{ tituloModal }}</h4>
+      <p>{{ mensajeModal }}</p>
+      <div class="cu-modal-botones">
+        <button type="button" class="cu-btn-sec" (click)="cerrarAccion()" [disabled]="procesando">Volver</button>
+        <button type="button" class="cu-btn-pri" (click)="confirmarAccion()" [disabled]="procesando">
+          {{ procesando ? 'Procesando...' : textoConfirmar }}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

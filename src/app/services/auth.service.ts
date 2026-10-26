@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, user, updateProfile, sendEmailVerification } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class AuthService {
   // Observable con el usuario actual (o null si no hay sesión iniciada)
   user$: Observable<any>;
 
-  constructor(private auth: Auth) {
+  constructor(private readonly auth: Auth) {
     this.user$ = user(this.auth);
   }
 
@@ -39,6 +40,11 @@ export class AuthService {
       return sendEmailVerification(this.auth.currentUser);
     }
     return Promise.reject('No hay usuario con sesión activa');
+  }
+
+  // Devuelve el usuario actual (o null) esperando a que Firebase cargue la sesión
+  obtenerUsuarioActual(): Promise<any> {
+    return this.user$.pipe(take(1)).toPromise();
   }
 
   logout() {
