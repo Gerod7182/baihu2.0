@@ -1,228 +1,262 @@
-<section class="admin-wrap">
+<section class="adm-pagina" *ngIf="{ p: productos$ | async, g: galeria$ | async, o: ofertas$ | async } as d">
+  <div class="adm-col">
 
-  <h1 class="admin-title">Panel de Administración</h1>
-  <p class="admin-subtitle">baihuart · gestión de contenido</p>
+    <h1 class="adm-titulo">Panel de administración</h1>
+    <p class="adm-sub">baihuart · gestión de contenido</p>
 
-  <!-- =========================
-       🚚 MIGRACIÓN (una sola vez)
-       ========================= -->
-  <div class="ink-form" style="border-color: #ff9800; margin-bottom: 3rem;">
-    <div class="ink-form__eyebrow" style="color: #ff9800;">Herramienta única</div>
-    <h3 class="ink-form__title">Importar diseños originales</h3>
-    <p class="ink-form__hint">
-      Tus diseños de lanzamiento (los que ya tenías antes de este panel) viven directo en el código,
-      no en la base de datos — por eso no aparecen abajo para editar/eliminar. Dale click aquí
-      <strong>una sola vez</strong> para copiarlos a la base de datos y así poder gestionarlos igual que los nuevos.
-    </p>
-    <button (click)="migrarDisenosOriginales()" class="btn-ink" style="background: #ff9800;" [disabled]="migrando">
-      {{ migrando ? 'Migrando...' : 'Importar diseños originales' }}
-    </button>
-    <p *ngIf="mensajeMigracion" class="form-message">{{ mensajeMigracion }}</p>
-  </div>
-
-  <div class="section-divider"></div>
-
-  <!-- =========================
-       🛍️ PRODUCTOS
-       ========================= -->
-
-  <div class="ink-form">
-    <div class="ink-form__eyebrow">Tienda</div>
-    <h3 class="ink-form__title">{{ productoEditandoId ? 'Editando producto' : 'Agregar nuevo producto' }}</h3>
-
-    <div class="field">
-      <label>Nombre</label>
-      <input [(ngModel)]="producto.nombre" type="text" placeholder="Ej: Camiseta Nueva">
-    </div>
-
-    <div class="field">
-      <label>Código (único)</label>
-      <input [(ngModel)]="producto.codigo" type="text" placeholder="Ej: prod-cam-nueva">
-    </div>
-
-    <div class="field">
-      <label>Precio</label>
-      <input [(ngModel)]="producto.precio" type="number">
-    </div>
-
-    <div class="field">
-      <label>Categoría</label>
-      <select [(ngModel)]="producto.categoria">
-        <option value="camisetas">Camisetas</option>
-        <option value="stickers">Stickers</option>
-        <option value="posters">Posters</option>
-      </select>
-    </div>
-
-        <div class="field">
-      <label>Imagen</label>
-      <input #fProd type="file" accept="image/*" hidden (change)="subirFoto($event, 'producto')">
-      <button type="button" class="btn-ghost" (click)="fProd.click()" [disabled]="subiendo">
-        {{ subiendo ? 'Subiendo...' : 'Elegir foto' }}
+    <!-- PESTAÑAS -->
+    <div class="adm-tabs">
+      <button type="button" class="adm-tab" [class.activa]="pestana === 'productos'" (click)="pestana = 'productos'">
+        <i class="fas fa-tshirt"></i>
+        <strong>{{ d.p?.length || 0 }}</strong>
+        <small>Productos</small>
       </button>
-      <input type="text" [(ngModel)]="producto.img" placeholder="o pega una URL https://...">
-      <img *ngIf="producto.img" [src]="producto.img" class="upload-preview">
-      <p *ngIf="errorSubida" class="form-message">{{ errorSubida }}</p>
-    </div>
-
-    <button (click)="guardarProducto()" class="btn-ink">
-      {{ productoEditandoId ? 'Actualizar producto' : 'Guardar en Firebase' }}
-    </button>
-
-    <button *ngIf="productoEditandoId" (click)="cancelarEdicionProducto()" class="btn-ghost">
-      Cancelar edición
-    </button>
-
-    <p *ngIf="mensaje" class="form-message">{{ mensaje }}</p>
-  </div>
-
-  <h3 class="list-heading">Productos guardados</h3>
-  <div class="card-grid">
-    <div *ngFor="let p of (productos$ | async)" class="ink-card">
-      <div class="ink-card__tag">{{ p.categoria }}</div>
-      <img [src]="p.img">
-      <div class="ink-card__body">
-        <div class="ink-card__name">{{ p.nombre }}</div>
-        <div class="ink-card__meta">${{ p.precio }}</div>
-        <div class="ink-card__actions">
-          <button (click)="editarProducto(p)">Editar</button>
-          <button (click)="duplicarProducto(p)">Duplicar</button>
-          <button (click)="eliminarProducto(p.id)" class="danger">Eliminar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-divider"></div>
-
-  <!-- =========================
-       🖼️ GALERÍA
-       ========================= -->
-
-  <div class="ink-form">
-    <div class="ink-form__eyebrow">Galería</div>
-    <h3 class="ink-form__title">{{ itemGaleriaEditandoId ? 'Editando imagen de galería' : 'Agregar imagen a la galería' }}</h3>
-
-    <div class="field">
-      <label>Título</label>
-      <input [(ngModel)]="itemGaleria.titulo" type="text" placeholder="Ej: Tigre Blanco">
-    </div>
-
-    <div class="field">
-      <label>Descripción</label>
-      <textarea [(ngModel)]="itemGaleria.descripcion" placeholder="Breve descripción del diseño"></textarea>
-    </div>
-
-    <div class="field">
-      <label>Categoría</label>
-      <select [(ngModel)]="itemGaleria.categoria">
-        <option value="espiritual">Espiritual</option>
-        <option value="anime">Anime</option>
-        <option value="pop">Cultura Pop</option>
-      </select>
-    </div>
-
-       <div class="field">
-      <label>Imagen</label>
-      <input #fGal type="file" accept="image/*" hidden (change)="subirFoto($event, 'galeria')">
-      <button type="button" class="btn-ghost" (click)="fGal.click()" [disabled]="subiendo">
-        {{ subiendo ? 'Subiendo...' : 'Elegir foto' }}
+      <button type="button" class="adm-tab" [class.activa]="pestana === 'galeria'" (click)="pestana = 'galeria'">
+        <i class="fas fa-images"></i>
+        <strong>{{ d.g?.length || 0 }}</strong>
+        <small>Galería</small>
       </button>
-      <input type="text" [(ngModel)]="itemGaleria.img" placeholder="o pega una URL https://...">
-      <img *ngIf="itemGaleria.img" [src]="itemGaleria.img" class="upload-preview">
-      <p *ngIf="errorSubida" class="form-message">{{ errorSubida }}</p>
-    </div>
-
-
-    <button (click)="guardarItemGaleria()" class="btn-ink">
-      {{ itemGaleriaEditandoId ? 'Actualizar imagen' : 'Agregar a la galería' }}
-    </button>
-
-    <button *ngIf="itemGaleriaEditandoId" (click)="cancelarEdicionGaleria()" class="btn-ghost">
-      Cancelar edición
-    </button>
-
-    <p *ngIf="mensajeGaleria" class="form-message">{{ mensajeGaleria }}</p>
-  </div>
-
-  <h3 class="list-heading">Imágenes en la galería</h3>
-  <div class="card-grid">
-    <div *ngFor="let item of (galeria$ | async)" class="ink-card">
-      <div class="ink-card__tag">{{ item.categoria }}</div>
-      <img [src]="item.img">
-      <div class="ink-card__body">
-        <div class="ink-card__name">{{ item.titulo }}</div>
-        <div class="ink-card__actions">
-          <button (click)="editarItemGaleria(item)">Editar</button>
-          <button (click)="eliminarItemGaleria(item.id)" class="danger">Eliminar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-divider"></div>
-
-  <!-- =========================
-       🔥 OFERTAS
-       ========================= -->
-
-  <div class="ink-form">
-    <div class="ink-form__eyebrow">Ofertas</div>
-    <h3 class="ink-form__title">{{ ofertaEditandoId ? 'Editando oferta' : 'Agregar nueva oferta' }}</h3>
-    <p class="ink-form__hint">Útil para paquetes/combos: ej. "Combo Dragón: camiseta + sticker + poster" con una sola foto y un precio especial.</p>
-
-    <div class="field">
-      <label>Nombre</label>
-      <input [(ngModel)]="oferta.nombre" type="text" placeholder="Ej: Combo Dragón">
-    </div>
-
-    <div class="field">
-      <label>Precio antes</label>
-      <input [(ngModel)]="oferta.precioAntes" type="number">
-    </div>
-
-    <div class="field">
-      <label>Precio ahora (con descuento)</label>
-      <input [(ngModel)]="oferta.precioAhora" type="number">
-    </div>
-
-        <div class="field">
-      <label>Imagen</label>
-      <input #fOf type="file" accept="image/*" hidden (change)="subirFoto($event, 'oferta')">
-      <button type="button" class="btn-ghost" (click)="fOf.click()" [disabled]="subiendo">
-        {{ subiendo ? 'Subiendo...' : 'Elegir foto' }}
+      <button type="button" class="adm-tab" [class.activa]="pestana === 'ofertas'" (click)="pestana = 'ofertas'">
+        <i class="fas fa-tags"></i>
+        <strong>{{ d.o?.length || 0 }}</strong>
+        <small>Ofertas</small>
       </button>
-      <input type="text" [(ngModel)]="oferta.img" placeholder="o pega una URL https://...">
-      <img *ngIf="oferta.img" [src]="oferta.img" class="upload-preview">
-      <p *ngIf="errorSubida" class="form-message">{{ errorSubida }}</p>
     </div>
 
+    <!-- =========================
+         🛍️ PRODUCTOS
+         ========================= -->
+    <ng-container *ngIf="pestana === 'productos'">
 
-    <button (click)="guardarOferta()" class="btn-ink">
-      {{ ofertaEditandoId ? 'Actualizar oferta' : 'Publicar oferta' }}
-    </button>
+      <div class="adm-form">
+        <span class="adm-eyebrow">Tienda</span>
+        <h3 class="adm-form-titulo">{{ productoEditandoId ? 'Editando producto' : 'Agregar nuevo producto' }}</h3>
 
-    <button *ngIf="ofertaEditandoId" (click)="cancelarEdicionOferta()" class="btn-ghost">
-      Cancelar edición
-    </button>
+        <div class="adm-form-grid">
 
-    <p *ngIf="mensajeOferta" class="form-message">{{ mensajeOferta }}</p>
-  </div>
+          <div class="adm-img-col">
+            <div class="adm-preview">
+              <img *ngIf="producto.img" [src]="producto.img" alt="Vista previa">
+              <span *ngIf="!producto.img" class="adm-sin-img"><i class="fas fa-image"></i>Sin imagen</span>
+            </div>
+            <input #fProd type="file" accept="image/*" hidden (change)="subirFoto($event, 'producto')">
+            <button type="button" class="adm-btn-sec" (click)="fProd.click()" [disabled]="subiendo">
+              <i class="fas fa-camera"></i> {{ subiendo ? 'Subiendo...' : 'Elegir foto' }}
+            </button>
+            <input class="adm-input" type="text" [(ngModel)]="producto.img" placeholder="o pega una URL https://...">
+            <p *ngIf="errorSubida" class="adm-error">{{ errorSubida }}</p>
+          </div>
 
-  <h3 class="list-heading">Ofertas activas</h3>
-  <div class="card-grid">
-    <div *ngFor="let o of (ofertas$ | async)" class="ink-card">
-      <div class="ink-card__tag">Oferta</div>
-      <img [src]="o.img">
-      <div class="ink-card__body">
-        <div class="ink-card__name">{{ o.nombre }}</div>
-        <div class="ink-card__meta"><span class="old">${{ o.precioAntes }}</span>${{ o.precioAhora }}</div>
-        <div class="ink-card__actions">
-          <button (click)="editarOferta(o)">Editar</button>
-          <button (click)="eliminarOferta(o.id)" class="danger">Eliminar</button>
+          <div class="adm-campos">
+            <label class="adm-label">Nombre</label>
+            <input class="adm-input" [(ngModel)]="producto.nombre" type="text" placeholder="Ej: Camiseta Nueva">
+
+            <label class="adm-label">Código (único)</label>
+            <input class="adm-input" [(ngModel)]="producto.codigo" type="text" placeholder="Ej: prod-cam-nueva">
+
+            <label class="adm-label">Precio</label>
+            <input class="adm-input" [(ngModel)]="producto.precio" type="number">
+
+            <label class="adm-label">Categoría</label>
+            <select class="adm-input" [(ngModel)]="producto.categoria">
+              <option value="camisetas">Camisetas</option>
+              <option value="stickers">Stickers</option>
+              <option value="posters">Posters</option>
+            </select>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
 
+        <div class="adm-acciones-form">
+          <button type="button" class="adm-btn" (click)="guardarProducto()">
+            {{ productoEditandoId ? 'Actualizar producto' : 'Guardar producto' }}
+          </button>
+          <button type="button" *ngIf="productoEditandoId" class="adm-btn-ghost" (click)="cancelarEdicionProducto()">
+            Cancelar edición
+          </button>
+        </div>
+        <p *ngIf="mensaje" class="adm-msg">{{ mensaje }}</p>
+      </div>
+
+      <h3 class="adm-lista-titulo">Productos guardados</h3>
+      <p class="adm-vacio" *ngIf="d.p && d.p.length === 0">Todavía no hay productos.</p>
+
+      <div class="adm-grid">
+        <article *ngFor="let p of d.p" class="adm-card">
+          <div class="adm-card-img">
+            <img [src]="p.img" [alt]="p.nombre">
+            <span class="adm-chip">{{ p.categoria }}</span>
+          </div>
+          <div class="adm-card-body">
+            <div class="adm-card-nombre">{{ p.nombre }}</div>
+            <div class="adm-card-meta">${{ p.precio }}</div>
+            <div class="adm-card-acciones">
+              <button type="button" (click)="editarProducto(p)">Editar</button>
+              <button type="button" (click)="duplicarProducto(p)">Duplicar</button>
+              <button type="button" class="peligro" (click)="eliminarProducto(p.id)">Eliminar</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+    </ng-container>
+
+    <!-- =========================
+         🖼️ GALERÍA
+         ========================= -->
+    <ng-container *ngIf="pestana === 'galeria'">
+
+      <div class="adm-form">
+        <span class="adm-eyebrow">Galería</span>
+        <h3 class="adm-form-titulo">{{ itemGaleriaEditandoId ? 'Editando imagen de galería' : 'Agregar imagen a la galería' }}</h3>
+
+        <div class="adm-form-grid">
+
+          <div class="adm-img-col">
+            <div class="adm-preview">
+              <img *ngIf="itemGaleria.img" [src]="itemGaleria.img" alt="Vista previa">
+              <span *ngIf="!itemGaleria.img" class="adm-sin-img"><i class="fas fa-image"></i>Sin imagen</span>
+            </div>
+            <input #fGal type="file" accept="image/*" hidden (change)="subirFoto($event, 'galeria')">
+            <button type="button" class="adm-btn-sec" (click)="fGal.click()" [disabled]="subiendo">
+              <i class="fas fa-camera"></i> {{ subiendo ? 'Subiendo...' : 'Elegir foto' }}
+            </button>
+            <input class="adm-input" type="text" [(ngModel)]="itemGaleria.img" placeholder="o pega una URL https://...">
+            <p *ngIf="errorSubida" class="adm-error">{{ errorSubida }}</p>
+          </div>
+
+          <div class="adm-campos">
+            <label class="adm-label">Título</label>
+            <input class="adm-input" [(ngModel)]="itemGaleria.titulo" type="text" placeholder="Ej: Tigre Blanco">
+
+            <label class="adm-label">Descripción</label>
+            <textarea class="adm-input" [(ngModel)]="itemGaleria.descripcion" placeholder="Breve descripción del diseño"></textarea>
+
+            <label class="adm-label">Categoría</label>
+            <select class="adm-input" [(ngModel)]="itemGaleria.categoria">
+              <option value="espiritual">Espiritual</option>
+              <option value="anime">Anime</option>
+              <option value="pop">Cultura Pop</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="adm-acciones-form">
+          <button type="button" class="adm-btn" (click)="guardarItemGaleria()">
+            {{ itemGaleriaEditandoId ? 'Actualizar imagen' : 'Agregar a la galería' }}
+          </button>
+          <button type="button" *ngIf="itemGaleriaEditandoId" class="adm-btn-ghost" (click)="cancelarEdicionGaleria()">
+            Cancelar edición
+          </button>
+        </div>
+        <p *ngIf="mensajeGaleria" class="adm-msg">{{ mensajeGaleria }}</p>
+      </div>
+
+      <h3 class="adm-lista-titulo">Imágenes en la galería</h3>
+      <p class="adm-vacio" *ngIf="d.g && d.g.length === 0">Todavía no hay imágenes en la galería.</p>
+
+      <div class="adm-grid">
+        <article *ngFor="let item of d.g" class="adm-card">
+          <div class="adm-card-img">
+            <img [src]="item.img" [alt]="item.titulo">
+            <span class="adm-chip">{{ item.categoria }}</span>
+          </div>
+          <div class="adm-card-body">
+            <div class="adm-card-nombre">{{ item.titulo }}</div>
+            <div class="adm-card-acciones">
+              <button type="button" (click)="editarItemGaleria(item)">Editar</button>
+              <button type="button" class="peligro" (click)="eliminarItemGaleria(item.id)">Eliminar</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+    </ng-container>
+
+    <!-- =========================
+         🔥 OFERTAS
+         ========================= -->
+    <ng-container *ngIf="pestana === 'ofertas'">
+
+      <div class="adm-form">
+        <span class="adm-eyebrow">Ofertas</span>
+        <h3 class="adm-form-titulo">{{ ofertaEditandoId ? 'Editando oferta' : 'Agregar nueva oferta' }}</h3>
+        <p class="adm-hint">Útil para paquetes o combos: por ejemplo "Combo Dragón: camiseta + sticker + póster", con una sola foto y un precio especial.</p>
+
+        <div class="adm-form-grid">
+
+          <div class="adm-img-col">
+            <div class="adm-preview">
+              <img *ngIf="oferta.img" [src]="oferta.img" alt="Vista previa">
+              <span *ngIf="!oferta.img" class="adm-sin-img"><i class="fas fa-image"></i>Sin imagen</span>
+            </div>
+            <input #fOf type="file" accept="image/*" hidden (change)="subirFoto($event, 'oferta')">
+            <button type="button" class="adm-btn-sec" (click)="fOf.click()" [disabled]="subiendo">
+              <i class="fas fa-camera"></i> {{ subiendo ? 'Subiendo...' : 'Elegir foto' }}
+            </button>
+            <input class="adm-input" type="text" [(ngModel)]="oferta.img" placeholder="o pega una URL https://...">
+            <p *ngIf="errorSubida" class="adm-error">{{ errorSubida }}</p>
+          </div>
+
+          <div class="adm-campos">
+            <label class="adm-label">Nombre</label>
+            <input class="adm-input" [(ngModel)]="oferta.nombre" type="text" placeholder="Ej: Combo Dragón">
+
+            <label class="adm-label">Precio antes</label>
+            <input class="adm-input" [(ngModel)]="oferta.precioAntes" type="number">
+
+            <label class="adm-label">Precio ahora (con descuento)</label>
+            <input class="adm-input" [(ngModel)]="oferta.precioAhora" type="number">
+          </div>
+        </div>
+
+        <div class="adm-acciones-form">
+          <button type="button" class="adm-btn" (click)="guardarOferta()">
+            {{ ofertaEditandoId ? 'Actualizar oferta' : 'Publicar oferta' }}
+          </button>
+          <button type="button" *ngIf="ofertaEditandoId" class="adm-btn-ghost" (click)="cancelarEdicionOferta()">
+            Cancelar edición
+          </button>
+        </div>
+        <p *ngIf="mensajeOferta" class="adm-msg">{{ mensajeOferta }}</p>
+      </div>
+
+      <h3 class="adm-lista-titulo">Ofertas activas</h3>
+      <p class="adm-vacio" *ngIf="d.o && d.o.length === 0">Todavía no hay ofertas.</p>
+
+      <div class="adm-grid">
+        <article *ngFor="let o of d.o" class="adm-card">
+          <div class="adm-card-img">
+            <img [src]="o.img" [alt]="o.nombre">
+            <span class="adm-chip">Oferta</span>
+          </div>
+          <div class="adm-card-body">
+            <div class="adm-card-nombre">{{ o.nombre }}</div>
+            <div class="adm-card-meta"><span class="adm-tachado">${{ o.precioAntes }}</span> ${{ o.precioAhora }}</div>
+            <div class="adm-card-acciones">
+              <button type="button" (click)="editarOferta(o)">Editar</button>
+              <button type="button" class="peligro" (click)="eliminarOferta(o.id)">Eliminar</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+    </ng-container>
+
+    <!-- =========================
+         🚚 HERRAMIENTAS (migración única)
+         ========================= -->
+    <details class="adm-herramientas">
+      <summary>Herramientas avanzadas</summary>
+      <h3 class="adm-form-titulo">Importar diseños originales</h3>
+      <p class="adm-hint">
+        Copia a la base de datos los diseños de lanzamiento que viven en el código. Dale click
+        <strong>una sola vez</strong>: si lo corres dos veces, se duplican.
+      </p>
+      <button type="button" class="adm-btn" (click)="migrarDisenosOriginales()" [disabled]="migrando">
+        {{ migrando ? 'Migrando...' : 'Importar diseños originales' }}
+      </button>
+      <p *ngIf="mensajeMigracion" class="adm-msg">{{ mensajeMigracion }}</p>
+    </details>
+
+  </div>
 </section>

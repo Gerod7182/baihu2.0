@@ -50,6 +50,7 @@ export class AdminComponent implements OnInit {
   // 📷 SUBIDA DE IMÁGENES
   // =========================
   subiendo = false;
+    pestana: 'productos' | 'galeria' | 'ofertas' = 'productos';
   errorSubida = '';
 
   async subirFoto(evento: Event, destino: 'producto' | 'galeria' | 'oferta') {
